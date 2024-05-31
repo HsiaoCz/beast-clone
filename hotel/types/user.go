@@ -1,11 +1,13 @@
 package types
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
+	"os"
 	"regexp"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -55,18 +57,15 @@ func isEmailValidata(e string) bool {
 	return emailRegex.MatchString(e)
 }
 
-func NewUserFromReq(params CreateUserParam) (*User, error) {
-	encpw, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcryptCost)
-	if err != nil {
-		return nil, err
-	}
+func NewUserFromReq(params CreateUserParam) *User {
+	encpw := encryptPassword(params.Password)
 	return &User{
 		FirstName:         params.FirstName,
 		LastName:          params.LastName,
 		Email:             params.Email,
-		EncryptedPassword: string(encpw),
+		EncryptedPassword: encpw,
 		IsAdmin:           params.IsAdmin,
-	}, nil
+	}
 }
 
 type UserLoginParams struct {
@@ -74,11 +73,14 @@ type UserLoginParams struct {
 	Password string `json:"password"`
 }
 
-func (p UserLoginParams) EncryptedPassword() (*UserLoginParams, error) {
-	encpw, err := bcrypt.GenerateFromPassword([]byte(p.Password), bcryptCost)
-	if err != nil {
-		return nil, err
-	}
-	p.Password = string(encpw)
-	return &p, nil
+func (p UserLoginParams) EncryptedPassword() *UserLoginParams {
+	encpw := encryptPassword(p.Password)
+	p.Password = encpw
+	return &p
+}
+
+func encryptPassword(oPassword string) string {
+	h := md5.New()
+	h.Write([]byte(os.Getenv("SECRET")))
+	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }

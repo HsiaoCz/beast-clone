@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/HsiaoCz/beast-clone/hotel/storage"
 	"github.com/HsiaoCz/beast-clone/hotel/types"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserHandlers struct {
@@ -28,10 +28,7 @@ func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	if len(msg) != 0 {
 		return c.Status(http.StatusBadRequest).JSON(msg)
 	}
-	user, err := types.NewUserFromReq(req)
-	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, "create user failed please check the request params")
-	}
+	user := types.NewUserFromReq(req)
 	result, err := u.store.User.CreateUser(c.Context(), user)
 	if err != nil {
 		return NewAPIError(http.StatusInternalServerError, err.Error())
@@ -47,21 +44,32 @@ func (u *UserHandlers) HandleUserLogin(c *fiber.Ctx) error {
 	if err := c.BodyParser(&userloginReq); err != nil {
 		return NewAPIError(http.StatusBadRequest, "please check the request params")
 	}
-	params, err := userloginReq.EncryptedPassword()
-	if err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
-	}
-	fmt.Printf("%+v", params)
+	params := userloginReq.EncryptedPassword()
 	user, err := u.store.User.GetUserByEmail(c.Context(), params.Email)
 	if err != nil {
 		return NewAPIError(http.StatusBadRequest, err.Error())
 	}
-	fmt.Printf("%+v", user)
 	if params.Password != user.EncryptedPassword {
 		return NewAPIError(http.StatusBadRequest, "please check the email or password")
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
 		"message": "login success!",
+	})
+}
+
+func (u *UserHandlers) HandleGetUserByID(c *fiber.Ctx) error {
+	id := c.Query("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, "query param is invalid")
+	}
+	user, err := u.store.User.GetUserByID(c.Context(), uid)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "get user success!",
+		"user":    user,
 	})
 }

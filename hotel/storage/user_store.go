@@ -13,6 +13,7 @@ import (
 type UserStorer interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
 	GetUserByEmail(context.Context, string) (*types.User, error)
+	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -48,4 +49,12 @@ func (m *MongoUserStore) GetUserByEmail(ctx context.Context, email string) (*typ
 		return nil, errors.New("database doesnt havh this record")
 	}
 	return &check, nil
+}
+
+func (m *MongoUserStore) GetUserByID(ctx context.Context, id primitive.ObjectID) (*types.User, error) {
+	user := types.User{}
+	if err := m.coll.FindOne(ctx, bson.D{{Key: "_id", Value: id}}).Decode(&user); err != nil {
+		return nil, errors.New("query database failed please check the query params")
+	}
+	return &user, nil
 }
