@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,6 +16,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var config = fiber.Config{
+	ErrorHandler: func(c *fiber.Ctx, err error) error {
+		if apiError, ok := err.(handlers.APIError); ok {
+			return c.Status(apiError.Status).JSON(&apiError)
+		}
+		aError := handlers.NewAPIError(http.StatusInternalServerError, err.Error())
+		return c.Status(aError.Status).JSON(&aError)
+	},
+}
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -32,12 +43,13 @@ func main() {
 		mongoUserStore = storage.NewMongoUserStore(client, userColl)
 		store          = &storage.Store{User: mongoUserStore}
 		userHandlers   = handlers.NewUserHandlers(store)
-		app            = fiber.New()
+		app            = fiber.New(config)
 		v1             = app.Group("/api/v1")
 	)
 	{
 		// router
 		v1.Post("/user", userHandlers.HandleCreateUser)
+		v1.Post("/user/login", userHandlers.HandleUserLogin)
 	}
 
 	go func() {
