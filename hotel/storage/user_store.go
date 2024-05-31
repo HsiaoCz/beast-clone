@@ -14,6 +14,7 @@ type UserStorer interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
 	GetUserByEmail(context.Context, string) (*types.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
+	DeleteUserByID(context.Context, primitive.ObjectID) error
 }
 
 type MongoUserStore struct {
@@ -57,4 +58,15 @@ func (m *MongoUserStore) GetUserByID(ctx context.Context, id primitive.ObjectID)
 		return nil, errors.New("query database failed please check the query params")
 	}
 	return &user, nil
+}
+
+func (m *MongoUserStore) DeleteUserByID(ctx context.Context, id primitive.ObjectID) error {
+	result, err := m.coll.DeleteOne(ctx, bson.D{{Key: "_id", Value: id}})
+	if err != nil {
+		return errors.New("delete this record failed")
+	}
+	if result.DeletedCount == 0 {
+		return errors.New("database doesn't have this record")
+	}
+	return nil
 }

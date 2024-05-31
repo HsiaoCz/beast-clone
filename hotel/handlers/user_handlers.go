@@ -73,3 +73,18 @@ func (u *UserHandlers) HandleGetUserByID(c *fiber.Ctx) error {
 		"user":    user,
 	})
 }
+
+func (u *UserHandlers) HandleDeleteUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, "query param is invalid")
+	}
+	if err := u.store.User.DeleteUserByID(c.Context(), uid); err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "delete user success!",
+		"status":  http.StatusOK,
+	})
+}
