@@ -88,3 +88,7 @@ func (u *UserHandlers) HandleDeleteUser(c *fiber.Ctx) error {
 		"status":  http.StatusOK,
 	})
 }
+
+func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
+	return nil
+}

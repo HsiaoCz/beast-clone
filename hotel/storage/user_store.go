@@ -15,6 +15,7 @@ type UserStorer interface {
 	GetUserByEmail(context.Context, string) (*types.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
+	UpdateUser(context.Context, primitive.ObjectID, *types.User) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -69,4 +70,8 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, id primitive.Object
 		return errors.New("database doesn't have this record")
 	}
 	return nil
+}
+
+func (m *MongoUserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID, user *types.User) (*types.User, error) {
+	return nil, nil
 }
