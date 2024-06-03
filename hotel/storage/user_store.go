@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserStorer interface {
@@ -15,7 +16,7 @@ type UserStorer interface {
 	GetUserByEmail(context.Context, string) (*types.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
-	UpdateUser(context.Context, primitive.ObjectID, *types.User) (*types.User, error)
+	UpdateUser(context.Context, primitive.ObjectID, *types.UpdateUserParams) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -72,6 +73,23 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, id primitive.Object
 	return nil
 }
 
-func (m *MongoUserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID, user *types.User) (*types.User, error) {
-	return nil, nil
+func (m *MongoUserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID, params *types.UpdateUserParams) (*types.User, error) {
+	filter := bson.D{{Key: "_id", Value: uid}}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "firstName", Value: params.FirstName},
+			{Key: "lastName", Value: params.LastName},
+		}},
+	}
+	updateOptions := options.Update().SetUpsert(true)
+	_, err := m.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	res := types.User{}
+	if err := m.coll.FindOne(ctx, filter).Decode(&res); err != nil {
+		return nil, err
+	}
+	return &res, nil
 }

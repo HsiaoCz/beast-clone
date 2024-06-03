@@ -90,5 +90,21 @@ func (u *UserHandlers) HandleDeleteUser(c *fiber.Ctx) error {
 }
 
 func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
-	return nil
+	id := c.Params("id")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, "please check the uid param")
+	}
+	up := types.UpdateUserParams{}
+	if err := c.BodyParser(&up); err != nil {
+		return NewAPIError(http.StatusBadRequest, "please check the update params")
+	}
+	user, err := u.store.User.UpdateUser(c.Context(), uid, &up)
+	if err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": http.StatusOK,
+		"user":   user,
+	})
 }

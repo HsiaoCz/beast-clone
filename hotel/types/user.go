@@ -84,3 +84,8 @@ func encryptPassword(oPassword string) string {
 	h.Write([]byte(os.Getenv("SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
+
+type UpdateUserParams struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
