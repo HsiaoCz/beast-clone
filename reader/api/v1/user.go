@@ -40,3 +40,10 @@ func (u *UserHandler) HandleCreateUser(c *gin.Context) {
 		"result":  result,
 	})
 }
+
+func (u *UserHandler) HandleUpdateUser(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "update user success",
+	})
+}

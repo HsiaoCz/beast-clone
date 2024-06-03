@@ -12,6 +12,7 @@ import (
 
 type UserStorer interface {
 	CreateUser(context.Context, *models.User) (*models.User, error)
+	UpdateUser(context.Context) error
 }
 
 type MongoUserStore struct {
@@ -38,4 +39,8 @@ func (m *MongoUserStore) CreateUser(ctx context.Context, user *models.User) (*mo
 	}
 	user.ID = result.InsertedID.(primitive.ObjectID)
 	return user, nil
+}
+
+func (m *MongoUserStore) UpdateUser(ctx context.Context) error {
+	return nil
 }

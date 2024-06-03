@@ -13,4 +13,9 @@ type User struct {
 	IsAdmin  bool               `bson:"isAdmin" json:"isAdmin"`
 }
 
-//
+// update user
+type UserUpdateParams struct {
+	Username string `json:"username"`
+	Content  string `json:"content"`
+	Avatar   string `json:"avatar"`
+}
