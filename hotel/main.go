@@ -53,6 +53,9 @@ func main() {
 		v1.Get("/user", userHandlers.HandleGetUserByID)
 		v1.Delete("/user/:id", userHandlers.HandleDeleteUser)
 		v1.Post("/user/:id", userHandlers.HandleUpdateUser)
+
+		// router for booking
+		// v1.Post("/")
 	}
 
 	go func() {

@@ -8,11 +8,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserStorer interface {
 	CreateUser(context.Context, *models.User) (*models.User, error)
-	UpdateUser(context.Context) error
+	UpdateUser(context.Context, primitive.ObjectID, *models.UserUpdateParams) (*models.User, error)
+	GetUserByID(context.Context, primitive.ObjectID) (*models.User, error)
 }
 
 type MongoUserStore struct {
@@ -41,6 +43,33 @@ func (m *MongoUserStore) CreateUser(ctx context.Context, user *models.User) (*mo
 	return user, nil
 }
 
-func (m *MongoUserStore) UpdateUser(ctx context.Context) error {
-	return nil
+func (m *MongoUserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID, userupdate *models.UserUpdateParams) (*models.User, error) {
+	filter := bson.D{{Key: "_id", Value: uid}}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "username", Value: userupdate.Username},
+			{Key: "content", Value: userupdate.Content},
+			{Key: "avatar", Value: userupdate.Avatar},
+		}},
+	}
+	updateOptions := options.Update().SetUpsert(true)
+	_, err := m.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	res := models.User{}
+	if err := m.coll.FindOne(ctx, filter).Decode(&res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (m *MongoUserStore) GetUserByID(ctx context.Context, uid primitive.ObjectID) (*models.User, error) {
+	user := models.User{}
+	filter := bson.D{{Key: "_id", Value: uid}}
+	if err := m.coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
 }

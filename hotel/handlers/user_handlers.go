@@ -19,6 +19,9 @@ func NewUserHandlers(store *storage.Store) *UserHandlers {
 	}
 }
 
+// handler use to create user
+// input types.CreateUserParam{} output types.User{}
+
 func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	req := types.CreateUserParam{}
 	if err := c.BodyParser(&req); err != nil {
@@ -39,6 +42,8 @@ func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	})
 }
 
+// handle User Login
+// input types.UserLoginParams{}
 func (u *UserHandlers) HandleUserLogin(c *fiber.Ctx) error {
 	userloginReq := types.UserLoginParams{}
 	if err := c.BodyParser(&userloginReq); err != nil {
@@ -96,6 +101,10 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 		return NewAPIError(http.StatusBadRequest, "please check the uid param")
 	}
 	up := types.UpdateUserParams{}
+	msg := up.ValidateUpdateUserParams()
+	if len(msg) != 0 {
+		return c.Status(http.StatusBadRequest).JSON(msg)
+	}
 	if err := c.BodyParser(&up); err != nil {
 		return NewAPIError(http.StatusBadRequest, "please check the update params")
 	}

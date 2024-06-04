@@ -6,6 +6,7 @@ import (
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"github.com/HsiaoCz/beast-clone/reader/storage"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserHandler struct {
@@ -42,8 +43,33 @@ func (u *UserHandler) HandleCreateUser(c *gin.Context) {
 }
 
 func (u *UserHandler) HandleUpdateUser(c *gin.Context) {
+	id := c.Param("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check the request params",
+		})
+		return
+	}
+	updateUserParams := models.UserUpdateParams{}
+	if err := c.BindJSON(&updateUserParams); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check the request params",
+		})
+		return
+	}
+	result, err := u.store.User.UpdateUser(c.Request.Context(), uid, &updateUserParams)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": err.Error(),
+		})
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "update user success",
+		"user":    result,
 	})
 }
