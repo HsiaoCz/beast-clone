@@ -39,6 +39,7 @@ func main() {
 	{
 		av1.POST("/user", userHandler.HandleCreateUser)
 		av1.POST("/user/:uid", userHandler.HandleUpdateUser)
+		
 	}
 	router.Run(port)
 }

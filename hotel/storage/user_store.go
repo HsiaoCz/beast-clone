@@ -49,7 +49,7 @@ func (m *MongoUserStore) GetUserByEmail(ctx context.Context, email string) (*typ
 	check := types.User{}
 	filter := bson.D{{Key: "email", Value: email}}
 	if err := m.coll.FindOne(ctx, filter).Decode(&check); err != nil {
-		return nil, errors.New("database doesnt havh this record")
+		return nil, errors.New("database doesnt have this record")
 	}
 	return &check, nil
 }

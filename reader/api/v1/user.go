@@ -73,3 +73,51 @@ func (u *UserHandler) HandleUpdateUser(c *gin.Context) {
 		"user":    result,
 	})
 }
+
+func (u *UserHandler) HandleGetUserByID(c *gin.Context) {
+	id := c.Param("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check the request param",
+		})
+		return
+	}
+	result, err := u.store.User.GetUserByID(c.Request.Context(), uid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "get user success",
+		"result":  result,
+	})
+}
+
+func (u *UserHandler) HandleDeleteUserByID(c *gin.Context) {
+	id := c.Param("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check the request param",
+		})
+		return
+	}
+	if err := u.store.User.DeleteUserByID(c.Request.Context(), uid); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "delete user success",
+	})
+}
