@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/HsiaoCz/beast-clone/hotel/handlers"
+	"github.com/HsiaoCz/beast-clone/hotel/handlers/middlewares"
 	"github.com/HsiaoCz/beast-clone/hotel/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -50,9 +51,9 @@ func main() {
 		// router
 		v1.Post("/user", userHandlers.HandleCreateUser)
 		v1.Post("/user/login", userHandlers.HandleUserLogin)
-		v1.Get("/user", userHandlers.HandleGetUserByID)
-		v1.Delete("/user/:id", userHandlers.HandleDeleteUser)
-		v1.Post("/user/:id", userHandlers.HandleUpdateUser)
+		v1.Get("/user", middlewares.JWTAuthMiddleware(), userHandlers.HandleGetUserByID)
+		v1.Delete("/user/:id", middlewares.JWTAuthMiddleware(), userHandlers.HandleDeleteUser)
+		v1.Post("/user/:id", middlewares.JWTAuthMiddleware(), userHandlers.HandleUpdateUser)
 
 		// router for booking
 		// v1.Post("/")

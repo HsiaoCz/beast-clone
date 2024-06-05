@@ -101,3 +101,10 @@ func (p UpdateUserParams) ValidateUpdateUserParams() map[string]string {
 	}
 	return errors
 }
+
+// UserInfo context
+type UserInfo struct {
+	UserID  primitive.ObjectID
+	Email   string
+	IsAdmin bool
+}

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/HsiaoCz/beast-clone/hotel/handlers/middlewares"
 	"github.com/HsiaoCz/beast-clone/hotel/storage"
 	"github.com/HsiaoCz/beast-clone/hotel/types"
 	"github.com/gofiber/fiber/v2"
@@ -57,9 +58,14 @@ func (u *UserHandlers) HandleUserLogin(c *fiber.Ctx) error {
 	if params.Password != user.EncryptedPassword {
 		return NewAPIError(http.StatusBadRequest, "please check the email or password")
 	}
+	token, err := middlewares.GenToken(user.ID, user.Email, user.IsAdmin)
+	if err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
-		"status":  http.StatusOK,
-		"message": "login success!",
+		"status": http.StatusOK,
+		"token":  token,
+		"user":   user,
 	})
 }
 
