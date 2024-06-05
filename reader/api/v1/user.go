@@ -127,3 +127,28 @@ func (u *UserHandler) HandleDeleteUserByID(c *gin.Context) {
 		"message": "delete user success",
 	})
 }
+
+func (u *UserHandler) HandleUserLogin(c *gin.Context) {
+	userLoginParams := models.UserLoginParams{}
+	if err := c.BindJSON(&userLoginParams); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check login params",
+		})
+		return
+	}
+	newUserLoginParams := models.NewUserLoginParams(userLoginParams)
+
+	user, err := u.store.User.GetUserByEmailAndPassword(c.Request.Context(), &newUserLoginParams)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "please check the username or password",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"user":   user,
+	})
+}

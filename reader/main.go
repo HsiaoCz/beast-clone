@@ -41,6 +41,7 @@ func main() {
 		av1.POST("/user/:uid", userHandler.HandleUpdateUser)
 		av1.GET("/user/:uid", userHandler.HandleGetUserByID)
 		av1.DELETE("/user/:uid", userHandler.HandleDeleteUserByID)
+		av1.POST("/user/login", userHandler.HandleUserLogin)
 
 	}
 	router.Run(port)

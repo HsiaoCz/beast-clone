@@ -77,3 +77,15 @@ func encrptyedPassword(oldPassword string) string {
 	h.Write([]byte(os.Getenv("SECERT")))
 	return hex.EncodeToString(h.Sum([]byte(oldPassword)))
 }
+
+type UserLoginParams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func NewUserLoginParams(userLoginParams UserLoginParams)UserLoginParams{
+	return UserLoginParams{
+		Email: userLoginParams.Email,
+		Password: encrptyedPassword(userLoginParams.Password),
+	}
+}
