@@ -32,10 +32,10 @@ func NewMongoUserStore(client *mongo.Client, coll *mongo.Collection) *MongoUserS
 }
 
 func (m *MongoUserStore) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {
-	res := models.User{}
 	filter := bson.D{{Key: "email", Value: user.Email}}
-	if err := m.coll.FindOne(ctx, filter).Decode(&res); err != mongo.ErrNoDocuments {
-		return nil, errors.New("this record exists")
+	curor := m.coll.FindOne(ctx, filter)
+	if curor.Err() != mongo.ErrNoDocuments {
+		return nil, errors.New("this user record exists")
 	}
 	result, err := m.coll.InsertOne(ctx, user)
 	if err != nil {

@@ -20,15 +20,21 @@ func NewUserHandler(store *storage.Store) *UserHandler {
 }
 
 func (u *UserHandler) HandleCreateUser(c *gin.Context) {
-	user := models.User{}
-	if err := c.BindJSON(&user); err != nil {
+	createUserParam := models.UserCreateParams{}
+	if err := c.BindJSON(&createUserParam); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
 			"message": "please check the request params",
 		})
 		return
 	}
-	result, err := u.store.User.CreateUser(c.Request.Context(), &user)
+	msg := createUserParam.ValidateParams()
+	if len(msg) != 0 {
+		c.JSON(http.StatusBadRequest, msg)
+		return
+	}
+	user := models.NewUserFromParams(createUserParam)
+	result, err := u.store.User.CreateUser(c.Request.Context(), user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
