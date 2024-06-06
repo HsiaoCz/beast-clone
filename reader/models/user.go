@@ -83,9 +83,16 @@ type UserLoginParams struct {
 	Password string `json:"password"`
 }
 
-func NewUserLoginParams(userLoginParams UserLoginParams)UserLoginParams{
+func NewUserLoginParams(userLoginParams UserLoginParams) UserLoginParams {
 	return UserLoginParams{
-		Email: userLoginParams.Email,
+		Email:    userLoginParams.Email,
 		Password: encrptyedPassword(userLoginParams.Password),
 	}
+}
+
+// UserInfo context
+type UserInfo struct {
+	UserID  primitive.ObjectID
+	Email   string
+	IsAdmin bool
 }

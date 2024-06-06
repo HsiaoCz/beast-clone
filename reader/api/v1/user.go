@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/HsiaoCz/beast-clone/reader/api/v1/middleware"
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"github.com/HsiaoCz/beast-clone/reader/storage"
 	"github.com/gin-gonic/gin"
@@ -147,8 +148,14 @@ func (u *UserHandler) HandleUserLogin(c *gin.Context) {
 		})
 		return
 	}
+	token, err := middleware.GenToken(user.ID, user.Email, user.IsAdmin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "something failed")
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"user":   user,
+		"token":  token,
 	})
 }
