@@ -3,8 +3,8 @@ package scripts
 import (
 	"context"
 	"errors"
-	"os"
 
+	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,11 +18,11 @@ type Feed struct {
 }
 
 func Newfeed() (*Feed, error) {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(os.Getenv("MONGOURL")))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(conf.Conf.App.MongoUri))
 	if err != nil {
 		return nil, err
 	}
-	return &Feed{client: client, coll: client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))}, nil
+	return &Feed{client: client, coll: client.Database(conf.Conf.App.DBName).Collection(conf.Conf.App.UserColl)}, nil
 }
 
 func (f *Feed) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {

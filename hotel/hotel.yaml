@@ -1,0 +1,9 @@
+app:
+  port: ":3001"
+  mongoUri: "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
+  dbname: "hotel"
+  userColl: "users"
+  hotelColl: "hotels"
+  roomColl: "rooms"
+  secert: "xiaofanyi"
+  jwtSecert: "little fan"

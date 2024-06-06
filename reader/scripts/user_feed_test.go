@@ -4,24 +4,24 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-	"os"
+	"log"
 	"testing"
 	"time"
 
+	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func encryptPassword(oPassword string) string {
 	h := md5.New()
-	h.Write([]byte(os.Getenv("SECRET")))
+	h.Write([]byte(conf.Conf.App.Secert))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 
 func TestCreateUser(t *testing.T) {
-	if err := godotenv.Load(); err != nil {
-		t.Fatal(err)
+	if err := conf.ParseConfig(); err != nil {
+		log.Fatal(err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -50,8 +50,8 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	if err := godotenv.Load(); err != nil {
-		t.Fatal(err)
+	if err := conf.ParseConfig(); err != nil {
+		log.Fatal(err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

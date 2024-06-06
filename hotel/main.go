@@ -9,11 +9,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/HsiaoCz/beast-clone/hotel/conf"
 	"github.com/HsiaoCz/beast-clone/hotel/handlers"
 	"github.com/HsiaoCz/beast-clone/hotel/handlers/middlewares"
 	"github.com/HsiaoCz/beast-clone/hotel/storage"
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -29,18 +29,18 @@ var config = fiber.Config{
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
+	if err := conf.ParseConfig(); err != nil {
 		log.Fatal(err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGOURL")))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(conf.Conf.App.MongoUri))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	var (
-		userColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
+		userColl       = client.Database(conf.Conf.App.DBName).Collection(conf.Conf.App.UserColl)
 		mongoUserStore = storage.NewMongoUserStore(client, userColl)
 		store          = &storage.Store{User: mongoUserStore}
 		userHandlers   = handlers.NewUserHandlers(store)
@@ -60,7 +60,7 @@ func main() {
 	}
 
 	go func() {
-		if err := app.Listen(os.Getenv("PORT")); err != nil {
+		if err := app.Listen(conf.Conf.App.Port); err != nil {
 			log.Fatal(err)
 		}
 	}()
