@@ -138,8 +138,10 @@ func (u *UserHandler) HandleUserLogin(c *gin.Context) {
 		})
 		return
 	}
+	// log.Println(userLoginParams) we dont need this shit
+	// who fucking change my config ????
 	newUserLoginParams := models.NewUserLoginParams(userLoginParams)
-
+	// log.Println(newUserLoginParams) and this anymore
 	user, err := u.store.User.GetUserByEmailAndPassword(c.Request.Context(), &newUserLoginParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

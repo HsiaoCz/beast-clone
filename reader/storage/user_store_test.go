@@ -4,13 +4,14 @@ import (
 	"context"
 	"testing"
 
-	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var ()
 
 type UserTest struct {
 	client *mongo.Client
@@ -51,16 +52,13 @@ func (u *UserTest) UpdateUser(ctx context.Context, uid primitive.ObjectID, useru
 }
 
 func TestUpdateUser(t *testing.T) {
-	if err := conf.ParseConfig(); err != nil {
-		t.Fatal(err)
-	}
 	var (
-		mongoURL     = conf.Conf.App.MongoUri
-		dbName       = conf.Conf.App.DBName
-		userCollName = conf.Conf.App.UserColl
+		mongoUri = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
+		dbname   = "reader"
+		userColl = "users"
 	)
 
-	ut, err := NewUserTest(mongoURL, dbName, userCollName)
+	ut, err := NewUserTest(mongoUri, dbname, userColl)
 	if err != nil {
 		t.Fatal(err)
 	}

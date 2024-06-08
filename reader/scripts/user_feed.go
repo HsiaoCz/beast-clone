@@ -4,12 +4,17 @@ import (
 	"context"
 	"errors"
 
-	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+var (
+	mongoUri = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
+	dbname   = "reader"
+	userColl = "users"
 )
 
 type Feed struct {
@@ -18,11 +23,11 @@ type Feed struct {
 }
 
 func Newfeed() (*Feed, error) {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(conf.Conf.App.MongoUri))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(mongoUri))
 	if err != nil {
 		return nil, err
 	}
-	return &Feed{client: client, coll: client.Database(conf.Conf.App.DBName).Collection(conf.Conf.App.UserColl)}, nil
+	return &Feed{client: client, coll: client.Database(dbname).Collection(userColl)}, nil
 }
 
 func (f *Feed) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {

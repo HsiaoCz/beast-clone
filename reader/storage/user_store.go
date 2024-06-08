@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -101,14 +102,19 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, uid primitive.Objec
 
 // user login return error
 func (m *MongoUserStore) GetUserByEmailAndPassword(ctx context.Context, userLoginParams *models.UserLoginParams) (*models.User, error) {
-	filter := bson.D{
-		{Key: "$get", Value: bson.D{
-			{Key: "email", Value: userLoginParams.Email},
-			{Key: "password", Value: userLoginParams.Password},
-		}},
+	// filter := bson.D{
+	// 	{Key: "$get", Value: bson.D{
+	// 		{Key: "email", Value: userLoginParams.Email},
+	// 		{Key: "password", Value: userLoginParams.Password},
+	// 	}},
+	// }
+	filter := bson.M{
+		"email":    userLoginParams.Email,
+		"password": userLoginParams.Password,
 	}
 	user := models.User{}
 	if err := m.coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		slog.Error("database error", "error message", err)
 		return nil, err
 	}
 	return &user, nil

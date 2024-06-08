@@ -31,16 +31,17 @@ type CreateUserParams struct {
 	FirstName   string `json:"firstName"`
 	LastName    string `json:"lastName"`
 	NickName    string `json:"nickName"`
-	Email       string `json:"email,omitempty"`
-	PhoneNumber string `json:"phoneNumber,omitempty"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
 	Password    string `json:"password"`
 }
 
 const (
-	minFirstName = 4
-	minLastName  = 4
-	minPassword  = 8
-	minNickName  = 4
+	minFirstName   = 4
+	minLastName    = 4
+	minPassword    = 8
+	minNickName    = 4
+	lenPhoneNumber = 11
 )
 
 func (params CreateUserParams) Validate() map[string]string {
@@ -56,6 +57,9 @@ func (params CreateUserParams) Validate() map[string]string {
 	}
 	if len(params.NickName) < minNickName {
 		errors["nickName"] = fmt.Sprintf("the nickName shoulden't short the %d", minNickName)
+	}
+	if len(params.PhoneNumber) != lenPhoneNumber {
+		errors["phoneNumber"] = fmt.Sprintf("the phoneNumber should equal %d", lenPhoneNumber)
 	}
 	if !isEmailValidata(params.Email) {
 		errors["email"] = fmt.Sprintf("the email %s is invalid", params.Email)

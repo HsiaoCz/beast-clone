@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
-	"log"
 	"testing"
 	"time"
 
@@ -20,9 +19,6 @@ func encryptPassword(oPassword string) string {
 }
 
 func TestCreateUser(t *testing.T) {
-	if err := conf.ParseConfig(); err != nil {
-		log.Fatal(err)
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	users := []models.User{
@@ -50,9 +46,6 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	if err := conf.ParseConfig(); err != nil {
-		log.Fatal(err)
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	feed, err := Newfeed()
