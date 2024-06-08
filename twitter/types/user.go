@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"regexp"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -55,11 +57,42 @@ func (params CreateUserParams) Validate() map[string]string {
 	if len(params.NickName) < minNickName {
 		errors["nickName"] = fmt.Sprintf("the nickName shoulden't short the %d", minNickName)
 	}
+	if !isEmailValidata(params.Email) {
+		errors["email"] = fmt.Sprintf("the email %s is invalid", params.Email)
+	}
 	return errors
+}
+func isEmailValidata(e string) bool {
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+[a-z]{2,4}$`)
+	return emailRegex.MatchString(e)
 }
 
 func EncryptedPassword(oldPassword string) string {
 	h := md5.New()
 	h.Write([]byte(os.Getenv("SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oldPassword)))
+}
+
+func NewUserFormParams(parmas CreateUserParams) *User {
+	user := &User{
+		FirstName:       parmas.FirstName,
+		LastName:        parmas.LastName,
+		NickName:        parmas.NickName,
+		Password:        EncryptedPassword(parmas.Password),
+		Email:           "",
+		PhoneNumber:     "",
+		Avatar:          "./static/user/avatar/1211.jpg",
+		BackgroundImage: "./static/user/background/1234.jpg",
+		Synopsis:        "",
+		JoinedTime:      time.Now().Format("2006/01/02"),
+		Following:       "0",
+		Followers:       "0",
+	}
+	if parmas.Email != "" {
+		user.Email = parmas.Email
+	}
+	if parmas.PhoneNumber != "" {
+		user.PhoneNumber = parmas.PhoneNumber
+	}
+	return user
 }

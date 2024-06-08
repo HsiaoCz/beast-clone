@@ -11,7 +11,11 @@ import (
 // why we use config but not use env
 // because the env need under the floder
 
-var Conf = new(AppConf)
+var Conf = new(Config)
+
+type Config struct {
+	App AppConf `mapstructure:"app"`
+}
 
 type AppConf struct {
 	Port      string `mapstructure:"port"`
