@@ -22,3 +22,7 @@ func NewMongoUserCase(client *mongo.Client, coll *mongo.Collection) *MongoUserCa
 		Coll:   coll,
 	}
 }
+
+func (m *MongoUserCase) CreateUser(ctx context.Context, user *types.User) (*types.User, error) {
+	return nil, nil
+}

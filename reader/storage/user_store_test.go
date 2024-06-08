@@ -2,11 +2,10 @@ package storage
 
 import (
 	"context"
-	"os"
 	"testing"
 
+	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -52,13 +51,13 @@ func (u *UserTest) UpdateUser(ctx context.Context, uid primitive.ObjectID, useru
 }
 
 func TestUpdateUser(t *testing.T) {
-	if err := godotenv.Load(); err != nil {
+	if err := conf.ParseConfig(); err != nil {
 		t.Fatal(err)
 	}
 	var (
-		mongoURL     = os.Getenv("MONGOURL")
-		dbName       = os.Getenv("DBNAME")
-		userCollName = os.Getenv("USERCOLL")
+		mongoURL     = conf.Conf.App.MongoUri
+		dbName       = conf.Conf.App.DBName
+		userCollName = conf.Conf.App.UserColl
 	)
 
 	ut, err := NewUserTest(mongoURL, dbName, userCollName)
