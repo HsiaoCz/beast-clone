@@ -12,6 +12,8 @@ import (
 
 type UserCaser interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
+	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
+	DeleteUserByID(context.Context, primitive.ObjectID) error
 }
 
 type MongoUserCase struct {
@@ -50,4 +52,23 @@ func (m *MongoUserCase) CreateUser(ctx context.Context, user *types.User) (*type
 	}
 	user.ID = result.InsertedID.(primitive.ObjectID)
 	return user, nil
+}
+
+func (m *MongoUserCase) GetUserByID(ctx context.Context, uid primitive.ObjectID) (*types.User, error) {
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+	user := types.User{}
+	if err := m.Coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (m *MongoUserCase) DeleteUserByID(ctx context.Context, uid primitive.ObjectID) error {
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+	_, err := m.Coll.DeleteOne(ctx, filter)
+	return err
 }

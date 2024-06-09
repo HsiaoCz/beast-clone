@@ -83,8 +83,8 @@ func NewUserFormParams(parmas CreateUserParams) *User {
 		LastName:        parmas.LastName,
 		NickName:        parmas.NickName,
 		Password:        EncryptedPassword(parmas.Password),
-		Email:           "",
-		PhoneNumber:     "",
+		Email:           parmas.Email,
+		PhoneNumber:     parmas.PhoneNumber,
 		Avatar:          "./static/user/avatar/1211.jpg",
 		BackgroundImage: "./static/user/background/1234.jpg",
 		Synopsis:        "",
@@ -92,11 +92,6 @@ func NewUserFormParams(parmas CreateUserParams) *User {
 		Following:       "0",
 		Followers:       "0",
 	}
-	if parmas.Email != "" {
-		user.Email = parmas.Email
-	}
-	if parmas.PhoneNumber != "" {
-		user.PhoneNumber = parmas.PhoneNumber
-	}
+
 	return user
 }
