@@ -123,3 +123,5 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 		"user":   user,
 	})
 }
+
+func (u *UserHandlers) HandleUserBookingRoom(c *fiber.Ctx) error { return nil }

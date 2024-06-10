@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/HsiaoCz/beast-clone/hotel/conf"
 	"github.com/HsiaoCz/beast-clone/hotel/handlers"
@@ -16,6 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var config = fiber.Config{
@@ -32,13 +32,16 @@ func main() {
 	if err := conf.ParseConfig(); err != nil {
 		log.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(conf.Conf.App.MongoUri))
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	go func() {
+		if err := client.Ping(ctx, &readpref.ReadPref{}); err != nil {
+			log.Fatal(err)
+		}
+	}()
 	var (
 		userColl       = client.Database(conf.Conf.App.DBName).Collection(conf.Conf.App.UserColl)
 		mongoUserStore = storage.NewMongoUserStore(client, userColl)

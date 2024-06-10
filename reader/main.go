@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
@@ -21,11 +22,20 @@ func main() {
 		dbName       = conf.Conf.App.DBName
 		userCollName = conf.Conf.App.UserColl
 		port         = conf.Conf.App.Port
+		ctx          = context.Background()
 	)
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(mongoURL))
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	go func() {
+		if err := client.Ping(ctx, &readpref.ReadPref{}); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
 	var (
 		userColl       = client.Database(dbName).Collection(userCollName)
 		userMongoStore = storage.NewMongoUserStore(client, userColl)

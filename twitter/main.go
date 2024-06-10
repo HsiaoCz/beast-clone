@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
@@ -21,10 +22,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(etc.Conf.App.MongoUri))
+	ctx := context.Background()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(etc.Conf.App.MongoUri))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	go func() {
+		if err := client.Ping(ctx, &readpref.ReadPref{}); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
 	var (
 		logger        = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
 		port          = etc.Conf.App.Port

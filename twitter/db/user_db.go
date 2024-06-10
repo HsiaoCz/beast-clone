@@ -17,14 +17,14 @@ type UserCaser interface {
 }
 
 type MongoUserCase struct {
-	Client *mongo.Client
-	Coll   *mongo.Collection
+	client *mongo.Client
+	coll   *mongo.Collection
 }
 
 func NewMongoUserCase(client *mongo.Client, coll *mongo.Collection) *MongoUserCase {
 	return &MongoUserCase{
-		Client: client,
-		Coll:   coll,
+		client: client,
+		coll:   coll,
 	}
 }
 
@@ -41,12 +41,12 @@ func (m *MongoUserCase) CreateUser(ctx context.Context, user *types.User) (*type
 		"email":       user.Email,
 		"phoneNumber": user.PhoneNumber,
 	}
-	cusor := m.Coll.FindOne(ctx, filter)
+	cusor := m.coll.FindOne(ctx, filter)
 	if cusor.Err() != mongo.ErrNoDocuments {
 		// log.Fatal(cusor.Err())
 		return nil, errors.New("error record exists")
 	}
-	result, err := m.Coll.InsertOne(ctx, user)
+	result, err := m.coll.InsertOne(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (m *MongoUserCase) GetUserByID(ctx context.Context, uid primitive.ObjectID)
 		{Key: "_id", Value: uid},
 	}
 	user := types.User{}
-	if err := m.Coll.FindOne(ctx, filter).Decode(&user); err != nil {
+	if err := m.coll.FindOne(ctx, filter).Decode(&user); err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -69,6 +69,6 @@ func (m *MongoUserCase) DeleteUserByID(ctx context.Context, uid primitive.Object
 	filter := bson.D{
 		{Key: "_id", Value: uid},
 	}
-	_, err := m.Coll.DeleteOne(ctx, filter)
+	_, err := m.coll.DeleteOne(ctx, filter)
 	return err
 }
