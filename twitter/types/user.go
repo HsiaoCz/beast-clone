@@ -95,3 +95,9 @@ func NewUserFormParams(parmas CreateUserParams) *User {
 
 	return user
 }
+
+type UserInfo struct {
+	UserID  primitive.ObjectID
+	Email   string
+	IsAdmin bool
+}
