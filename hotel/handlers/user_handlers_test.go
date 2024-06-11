@@ -82,7 +82,8 @@ func TestGetUserByID(t *testing.T) {
 	}
 
 	req1 := httptest.NewRequest("GET", "/user", nil)
-	req1.URL.Query().Add("uid", user.ID.String())
+	// req1.URL.Query().Add("uid", user.ID.String())
+	req1.SetPathValue("uid", user.ID.String())
 	resp1, err := app.Test(req1)
 	if err != nil {
 		t.Fatal(err)
