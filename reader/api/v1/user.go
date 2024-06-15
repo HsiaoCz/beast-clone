@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/HsiaoCz/beast-clone/reader/api/v1/middleware"
@@ -160,4 +161,9 @@ func (u *UserHandler) HandleUserLogin(c *gin.Context) {
 		"user":   user,
 		"token":  token,
 	})
+}
+
+func (u *UserHandler) HandleGetUsersByString(c *gin.Context) {
+	str := c.Query("search")
+	fmt.Println(str)
 }
