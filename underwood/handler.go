@@ -1,3 +1,3 @@
 package underwood
 
-type Handlerfunc func(c *Context) error
+type Handlerfunc func(c *Context)
