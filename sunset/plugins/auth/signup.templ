@@ -13,8 +13,7 @@ type SignupIndexPageData struct {
 
 type SignupFormValues struct {
 	Email           string `form:"email"`
-	FirstName       string `form:"firstName"`
-	LastName        string `form:"lastName"`
+	Username        string `form:"username"`
 	Password        string `form:"password"`
 	PasswordConfirm string `form:"passwordConfirm"`
 }
@@ -45,27 +44,27 @@ templ SignupForm(values SignupFormValues, errors v.Errors) {
 			}
 		</div>
 		<div class="flex flex-col gap-1">
-			<label for="firstName">First Name *</label>
-			<input { inputAttrs(errors.Has("firstName"))... } name="firstName" id="firstName" value={ values.FirstName }/>
-			if errors.Has("fistName") {
+			<label for="firstName">Username *</label>
+			<input { inputAttrs(errors.Has("Username"))... } name="username" id="username" value={ values.Username }/>
+			if errors.Has("Username") {
 				<ul>
-					for _, err := range errors.Get("firstName") {
+					for _, err := range errors.Get("Username") {
 						<li class="text-red-500 text-xs">{ err }</li>
 					}
 				</ul>
 			}
 		</div>
-		<div class="flex flex-col gap-1">
-			<label for="lastName">Last Name *</label>
-			<input { inputAttrs(errors.Has("lastName"))... } name="lastName" id="lastName" value={ values.LastName }/>
-			if errors.Has("lastName") {
-				<ul>
-					for _, err := range errors.Get("lastName") {
-						<li class="text-red-500 text-xs">{ err }</li>
-					}
-				</ul>
-			}
-		</div>
+		// <div class="flex flex-col gap-1">
+		// 	<label for="lastName">Last Name *</label>
+		// 	<input { inputAttrs(errors.Has("lastName"))... } name="lastName" id="lastName" value={ values.LastName }/>
+		// 	if errors.Has("lastName") {
+		// 		<ul>
+		// 			for _, err := range errors.Get("lastName") {
+		// 				<li class="text-red-500 text-xs">{ err }</li>
+		// 			}
+		// 		</ul>
+		// 	}
+		// </div>
 		<div class="flex flex-col gap-1">
 			<label for="password">Password *</label>
 			<input { inputAttrs(errors.Has("password"))... } type="password" name="password" id="password"/>

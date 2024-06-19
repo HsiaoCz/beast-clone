@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"sunset/app/db"
 	"cmp"
 	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
+	"sunset/app/db"
 	"time"
 
 	"github.com/anthdm/superkit/kit"
@@ -33,8 +33,7 @@ var signupSchema = v.Schema{
 		v.Min(7),
 		v.Max(50),
 	),
-	"firstName": v.Rules(v.Min(2), v.Max(50)),
-	"lastName":  v.Rules(v.Min(2), v.Max(50)),
+	"username": v.Rules(v.Min(2), v.Max(50)),
 }
 
 func HandleAuthIndex(kit *kit.Kit) error {

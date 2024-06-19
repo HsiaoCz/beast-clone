@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"sunset/app/db"
 	"context"
+	"sunset/app/db"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,8 +21,7 @@ func (auth Auth) Check() bool {
 type User struct {
 	ID              int `bun:"id,pk,autoincrement"`
 	Email           string
-	FirstName       string
-	LastName        string
+	Username        string
 	PasswordHash    string
 	EmailVerifiedAt time.Time
 	CreatedAt       time.Time
@@ -36,8 +35,7 @@ func createUserFromFormValues(values SignupFormValues) (User, error) {
 	}
 	user := User{
 		Email:        values.Email,
-		FirstName:    values.FirstName,
-		LastName:     values.LastName,
+		Username:     values.Username,
 		PasswordHash: string(hash),
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),

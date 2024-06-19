@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"sunset/app/db"
 	"fmt"
+	"sunset/app/db"
 
 	"github.com/anthdm/superkit/kit"
 	v "github.com/anthdm/superkit/validate"
@@ -14,11 +14,10 @@ var profileSchema = v.Schema{
 }
 
 type ProfileFormValues struct {
-	ID        int    `form:"id"`
-	FirstName string `form:"firstName"`
-	LastName  string `form:"lastName"`
-	Email     string
-	Success   string
+	ID       int    `form:"id"`
+	Username string `form:"username"`
+	Email    string
+	Success  string
 }
 
 func HandleProfileShow(kit *kit.Kit) error {
@@ -34,10 +33,9 @@ func HandleProfileShow(kit *kit.Kit) error {
 	}
 
 	formValues := ProfileFormValues{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
 	}
 
 	return kit.Render(ProfileShow(formValues))
@@ -56,8 +54,7 @@ func HandleProfileUpdate(kit *kit.Kit) error {
 	}
 	_, err := db.Query.NewUpdate().
 		Model((*User)(nil)).
-		Set("first_name = ?", values.FirstName).
-		Set("last_name = ?", values.LastName).
+		Set("username = ?", values.Username).
 		Where("id = ?", auth.UserID).
 		Exec(kit.Request.Context())
 	if err != nil {
