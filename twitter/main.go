@@ -54,6 +54,7 @@ func main() {
 	router.Post("/user", app.TransferHandler(userApp.HandleCreateUser))
 	router.Get("/user/{uid}", app.TransferHandler(userApp.HandleGetUserByID))
 	router.Delete("/user/{uid}", app.TransferHandler(userApp.HandleDeleteUserByID))
+	router.Delete("/user/{uid}", app.TransferHandler(userApp.HandleUpdateUserByID))
 
 	slog.Info("the server is running", "listen address", port)
 	http.ListenAndServe(port, router)

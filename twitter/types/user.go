@@ -96,6 +96,29 @@ func NewUserFormParams(parmas CreateUserParams) *User {
 	return user
 }
 
+type UpdateUserParams struct {
+	FirstName       string `json:"firstName"`
+	LastName        string `json:"lastName"`
+	NickName        string `json:"nickName"`
+	Avatar          string `json:"avatar"`
+	BackgroundImage string `json:"backgroundImage"`
+	Synopsis        string `json:"synopsis"`
+}
+
+func (params UpdateUserParams) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(params.FirstName) < minFirstName {
+		errors["firstName"] = fmt.Sprintf("the firstName shoulden't short then %d", minFirstName)
+	}
+	if len(params.LastName) < minLastName {
+		errors["lastName"] = fmt.Sprintf("the lastName shoulden't short then %d", minLastName)
+	}
+	if len(params.NickName) < minNickName {
+		errors["nickName"] = fmt.Sprintf("the nickName shoulden't short the %d", minNickName)
+	}
+	return errors
+}
+
 type UserInfo struct {
 	UserID  primitive.ObjectID
 	Email   string

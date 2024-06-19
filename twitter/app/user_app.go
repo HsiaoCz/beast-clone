@@ -71,3 +71,24 @@ func (m *UserApp) HandleDeleteUserByID(w http.ResponseWriter, r *http.Request) e
 		"message": fmt.Sprintf("delete user (uid=%v) success", uid),
 	})
 }
+
+func (m *UserApp) HandleUpdateUserByID(w http.ResponseWriter, r *http.Request) error {
+	id := chi.URLParam(r, "uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewErrorResp(http.StatusBadRequest, "invalid uid")
+	}
+	updateUserParams := types.UpdateUserParams{}
+	if err := json.NewDecoder(r.Body).Decode(&updateUserParams); err != nil {
+		return NewErrorResp(http.StatusBadRequest, err.Error())
+	}
+	msg := updateUserParams.Validate()
+	if len(msg) != 0 {
+		return WriteJson(w, http.StatusBadRequest, msg)
+	}
+	user, err := m.db.Uc.UpdateUserByID(r.Context(), uid, &updateUserParams)
+	if err != nil {
+		return NewErrorResp(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, user)
+}

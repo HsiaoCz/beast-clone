@@ -8,12 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserCaser interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
+	UpdateUserByID(context.Context, primitive.ObjectID, *types.UpdateUserParams) (*types.User, error)
 }
 
 type MongoUserCase struct {
@@ -71,4 +73,31 @@ func (m *MongoUserCase) DeleteUserByID(ctx context.Context, uid primitive.Object
 	}
 	_, err := m.coll.DeleteOne(ctx, filter)
 	return err
+}
+
+func (m *MongoUserCase) UpdateUserByID(ctx context.Context, uid primitive.ObjectID, updateUserParams *types.UpdateUserParams) (*types.User, error) {
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "firstName", Value: updateUserParams.FirstName},
+			{Key: "lastName", Value: updateUserParams.LastName},
+			{Key: "nickName", Value: updateUserParams.NickName},
+			{Key: "avatar", Value: updateUserParams.Avatar},
+			{Key: "backgroudImage", Value: updateUserParams.BackgroundImage},
+			{Key: "synopsis", Value: updateUserParams.Synopsis},
+		}},
+	}
+	updateOptions := options.Update().SetUpsert(true)
+	_, err := m.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	res := &types.User{}
+	if err := m.coll.FindOne(ctx, filter).Decode(res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
