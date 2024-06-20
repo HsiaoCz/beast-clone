@@ -57,7 +57,7 @@ func main() {
 		v1.Get("/user", middlewares.JWTAuthMiddleware(), userHandlers.HandleGetUserByID)
 		v1.Delete("/user/:id", middlewares.JWTAuthMiddleware(), userHandlers.HandleDeleteUser)
 		v1.Post("/user/:id", middlewares.JWTAuthMiddleware(), userHandlers.HandleUpdateUser)
-
+		v1.Post("/user/:email", middlewares.JWTAuthMiddleware(), userHandlers.HandleUserVerifyPassword)
 		// router for booking
 		// v1.Post("/")
 	}

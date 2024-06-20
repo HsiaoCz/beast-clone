@@ -124,4 +124,8 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 	})
 }
 
+func (u *UserHandlers) HandleUserVerifyPassword(c *fiber.Ctx) error {
+	return nil
+}
+
 func (u *UserHandlers) HandleUserBookingRoom(c *fiber.Ctx) error { return nil }

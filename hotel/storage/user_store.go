@@ -17,6 +17,7 @@ type UserStorer interface {
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
 	UpdateUser(context.Context, primitive.ObjectID, *types.UpdateUserParams) (*types.User, error)
+	VerifyUserPassword(context.Context, primitive.ObjectID, string) error
 }
 
 type MongoUserStore struct {
@@ -92,4 +93,29 @@ func (m *MongoUserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID,
 		return nil, err
 	}
 	return &res, nil
+}
+
+func (m *MongoUserStore) VerifyUserPassword(ctx context.Context, uid primitive.ObjectID, newPasswd string) error {
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "password", Value: newPasswd},
+		}},
+	}
+
+	updateOption := options.Update().SetUpsert(true)
+
+	res,err:=m.coll.UpdateOne(ctx,filter,update,updateOption)
+	if err != nil {
+		return err
+	}
+
+	if res.ModifiedCount==0{
+		return mongo.ErrNoDocuments
+	}
+
+	return nil
 }
