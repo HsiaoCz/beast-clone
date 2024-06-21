@@ -33,13 +33,6 @@ templ ProfileForm(values ProfileFormValues, errors v.Errors) {
 				<div class="text-red-500 text-xs">{ errors.Get("username")[0] }</div>
 			}
 		</div>
-		// <div class="flex flex-col gap-2">
-		// 	<label for="lastName">Last Name</label>
-		// 	<input { inputAttrs(errors.Has("lastName"))... } name="lastName" id="lastName" value={ values.LastName }/>
-		// 	if errors.Has("lastName") {
-		// 		<div class="text-red-500 text-xs">{ errors.Get("lastName")[0] }</div>
-		// 	}
-		// </div>
 		<div class="flex flex-col gap-2">
 			<label for="email">Email</label>
 			<div { inputAttrs(false)... }>{ values.Email }</div>

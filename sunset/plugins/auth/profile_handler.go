@@ -9,8 +9,7 @@ import (
 )
 
 var profileSchema = v.Schema{
-	"firstName": v.Rules(v.Min(3), v.Max(50)),
-	"lastName":  v.Rules(v.Min(3), v.Max(50)),
+	"username": v.Rules(v.Min(3), v.Max(50)),
 }
 
 type ProfileFormValues struct {

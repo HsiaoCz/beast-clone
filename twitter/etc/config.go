@@ -24,6 +24,7 @@ type AppConf struct {
 	UserColl  string `mapstructure:"userColl"`
 	Secert    string `mapstructure:"secret"`
 	JWTSecert string `mapstructure:"jwtSecret"`
+	PostColl  string `mapstructure:"postColl"`
 }
 
 func ParseConfig() error {

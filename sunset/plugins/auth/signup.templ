@@ -44,27 +44,16 @@ templ SignupForm(values SignupFormValues, errors v.Errors) {
 			}
 		</div>
 		<div class="flex flex-col gap-1">
-			<label for="firstName">Username *</label>
-			<input { inputAttrs(errors.Has("Username"))... } name="username" id="username" value={ values.Username }/>
-			if errors.Has("Username") {
+			<label for="username">Username *</label>
+			<input { inputAttrs(errors.Has("username"))... } name="username" id="username" value={ values.Username }/>
+			if errors.Has("username") {
 				<ul>
-					for _, err := range errors.Get("Username") {
+					for _, err := range errors.Get("username") {
 						<li class="text-red-500 text-xs">{ err }</li>
 					}
 				</ul>
 			}
 		</div>
-		// <div class="flex flex-col gap-1">
-		// 	<label for="lastName">Last Name *</label>
-		// 	<input { inputAttrs(errors.Has("lastName"))... } name="lastName" id="lastName" value={ values.LastName }/>
-		// 	if errors.Has("lastName") {
-		// 		<ul>
-		// 			for _, err := range errors.Get("lastName") {
-		// 				<li class="text-red-500 text-xs">{ err }</li>
-		// 			}
-		// 		</ul>
-		// 	}
-		// </div>
 		<div class="flex flex-col gap-1">
 			<label for="password">Password *</label>
 			<input { inputAttrs(errors.Has("password"))... } type="password" name="password" id="password"/>

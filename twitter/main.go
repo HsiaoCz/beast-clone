@@ -39,9 +39,12 @@ func main() {
 		logger        = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
 		port          = etc.Conf.App.Port
 		userColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.UserColl)
+		postColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.PostColl)
 		mongoUserCase = db.NewMongoUserCase(client, userColl)
-		dbs           = &db.DBS{Uc: mongoUserCase}
+		mongoPostCase = db.NewMongoPostStore(client, postColl)
+		dbs           = &db.DBS{Uc: mongoUserCase, Pc: mongoPostCase}
 		userApp       = app.NewUserApp(dbs)
+		postApp       = app.NewPostApp(dbs)
 		router        = chi.NewMux()
 	)
 
@@ -51,10 +54,14 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.RequestID)
 
+	// TODO need group router
+	// and use middleware auth
 	router.Post("/user", app.TransferHandler(userApp.HandleCreateUser))
 	router.Get("/user/{uid}", app.TransferHandler(userApp.HandleGetUserByID))
-	router.Delete("/user/{uid}", app.TransferHandler(userApp.HandleDeleteUserByID))
-	router.Delete("/user/{uid}", app.TransferHandler(userApp.HandleUpdateUserByID))
+	router.Delete("/user", app.TransferHandler(userApp.HandleDeleteUserByID))
+	router.Post("/user/update", app.TransferHandler(userApp.HandleUpdateUserByID))
+
+	router.Post("/posts", app.TransferHandler(postApp.HandleCreatePost))
 
 	slog.Info("the server is running", "listen address", port)
 	http.ListenAndServe(port, router)

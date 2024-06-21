@@ -18,14 +18,12 @@ type Post struct {
 }
 
 type CreatePostParams struct {
-	UserID     primitive.ObjectID `json:"userID"`
-	Content    string             `json:"content"`
-	StaticPath []string           `json:"staticPath,omitempty"`
+	Content    string   `json:"content"`
+	StaticPath []string `json:"staticPath,omitempty"`
 }
 
 func NewPostFromParams(param CreatePostParams) *Post {
 	return &Post{
-		UserID:     param.UserID,
 		Content:    param.Content,
 		StaticPath: param.StaticPath,
 		CreateAt:   time.Now(),
