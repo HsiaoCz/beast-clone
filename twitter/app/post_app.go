@@ -7,6 +7,8 @@ import (
 	"github.com/HsiaoCz/beast-clone/twitter/app/middleware"
 	"github.com/HsiaoCz/beast-clone/twitter/db"
 	"github.com/HsiaoCz/beast-clone/twitter/types"
+	"github.com/go-chi/chi/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type PostApp struct {
@@ -42,4 +44,19 @@ func (p *PostApp) HandleCreatePost(w http.ResponseWriter, r *http.Request) error
 	}
 
 	return WriteJson(w, http.StatusOK, postResp)
+}
+
+func (p *PostApp) HandleDeletePost(w http.ResponseWriter, r *http.Request) error {
+	paramid := chi.URLParam(r, "pid")
+	postID, err := primitive.ObjectIDFromHex(paramid)
+	if err != nil {
+		return NewErrorResp(http.StatusBadRequest, "invalid post id")
+	}
+	if err := p.db.Pc.DeletePostByID(r.Context(), postID); err != nil {
+		return NewErrorResp(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, map[string]any{
+		"status":  http.StatusOK,
+		"message": "delete post success",
+	})
 }

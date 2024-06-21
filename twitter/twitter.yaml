@@ -5,3 +5,4 @@ app:
   userColl: "users"
   secret: "xiaofanyi"
   jwtSecret: "little fan"
+  postColl: "posts"

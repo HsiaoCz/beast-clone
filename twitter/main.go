@@ -61,7 +61,10 @@ func main() {
 	router.Delete("/user", app.TransferHandler(userApp.HandleDeleteUserByID))
 	router.Post("/user/update", app.TransferHandler(userApp.HandleUpdateUserByID))
 
+	// TODO need group router
+	// posts handlers need auth middleware
 	router.Post("/posts", app.TransferHandler(postApp.HandleCreatePost))
+	router.Delete("/posts", app.TransferHandler(postApp.HandleDeletePost))
 
 	slog.Info("the server is running", "listen address", port)
 	http.ListenAndServe(port, router)
