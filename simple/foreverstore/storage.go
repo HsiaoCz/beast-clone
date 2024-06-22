@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"strings"
@@ -12,11 +14,19 @@ import (
 
 type PathKey struct {
 	Pathname string
-	Original string
+	FileName string
 }
 
-func (p PathKey) Filename() string {
-	return fmt.Sprintf("%s%s", p.Pathname, p.Original)
+func (p PathKey) FullPath() string {
+	return fmt.Sprintf("%s%s", p.Pathname, p.FileName)
+}
+
+func (p PathKey) FirstPathName() string {
+	paths := strings.Split(p.Pathname, "/")
+	if len(paths) == 0 {
+		return ""
+	}
+	return paths[0]
 }
 
 func CASPathTransformFunc(key string) PathKey {
@@ -35,7 +45,7 @@ func CASPathTransformFunc(key string) PathKey {
 
 	return PathKey{
 		Pathname: strings.Join(paths, "/"),
-		Original: hashstr,
+		FileName: hashstr,
 	}
 }
 
@@ -66,9 +76,9 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 		return err
 	}
 
-	pathAndFileName := pathKey.Filename()
+	fullPath := pathKey.FullPath()
 
-	f, err := os.OpenFile(pathAndFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	f, err := os.OpenFile(fullPath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		return err
 	}
@@ -78,7 +88,42 @@ func (s *Store) writeStream(key string, r io.Reader) error {
 		return err
 	}
 
-	log.Printf("writen (%d) bytes to disk : %s", n, pathAndFileName)
+	log.Printf("writen (%d) bytes to disk : %s", n, fullPath)
 
 	return nil
+}
+
+func (s *Store) readStream(key string) (io.ReadCloser, error) {
+	pathKey := s.PathTransformFunc(key)
+	return os.Open(pathKey.FullPath())
+}
+
+func (s *Store) Read(key string) (io.Reader, error) {
+	f, err := s.readStream(key)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	buf := new(bytes.Buffer)
+	io.Copy(buf, f)
+	_, err = io.Copy(buf, f)
+
+	return buf, err
+}
+
+func (s *Store) Delete(key string) error {
+	pathKey := s.PathTransformFunc(key)
+
+	defer func() {
+		log.Printf("deleted [%s] from disk", pathKey.FileName)
+	}()
+
+	return os.RemoveAll(pathKey.FirstPathName())
+}
+
+func (s *Store) Has(key string) bool {
+	pathKey := s.PathTransformFunc(key)
+
+	_, err := os.Stat(pathKey.FullPath())
+	return err != fs.ErrNotExist
 }
