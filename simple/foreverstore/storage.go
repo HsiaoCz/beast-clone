@@ -48,7 +48,7 @@ func CASPathTransformFunc(key string) PathKey {
 		FileName: hashstr,
 	}
 }
-
+// TODO: make a new storage example
 type PathTransformFunc func(string) PathKey
 
 type StoreOpts struct {
