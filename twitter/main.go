@@ -56,15 +56,15 @@ func main() {
 
 	// TODO need group router
 	// and use middleware auth
-	router.Post("/user", app.TransferHandler(userApp.HandleCreateUser))
-	router.Get("/user/{uid}", app.TransferHandler(userApp.HandleGetUserByID))
-	router.Delete("/user", app.TransferHandler(userApp.HandleDeleteUserByID))
-	router.Post("/user/update", app.TransferHandler(userApp.HandleUpdateUserByID))
+	router.Post("/user", app.TransferHandlerfunc(userApp.HandleCreateUser))
+	router.Get("/user/{uid}", app.TransferHandlerfunc(userApp.HandleGetUserByID))
+	router.Delete("/user", app.TransferHandlerfunc(userApp.HandleDeleteUserByID))
+	router.Post("/user/update", app.TransferHandlerfunc(userApp.HandleUpdateUserByID))
 
 	// TODO need group router
 	// posts handlers need auth middleware
-	router.Post("/posts", app.TransferHandler(postApp.HandleCreatePost))
-	router.Delete("/posts", app.TransferHandler(postApp.HandleDeletePost))
+	router.Post("/posts", app.TransferHandlerfunc(postApp.HandleCreatePost))
+	router.Delete("/posts", app.TransferHandlerfunc(postApp.HandleDeletePost))
 
 	slog.Info("the server is running", "listen address", port)
 	http.ListenAndServe(port, router)

@@ -12,7 +12,7 @@ type Comment struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	UserID   primitive.ObjectID `bson:"userID" json:"userID"`
 	PostID   primitive.ObjectID `bson:"postID" json:"postID"`
-	ParentID primitive.ObjectID `bson:"parentID" json:"parentID"`
+	ParentID primitive.ObjectID `bson:"parentID,omitempty" json:"parentID,omitempty"`
 	Content  string             `bson:"content" json:"content"`
 	CreateAt time.Time          `bson:"createAt" json:"createAt"`
 	Watches  string             `bson:"watches" json:"watches"`
@@ -21,7 +21,6 @@ type Comment struct {
 }
 
 type CreateCommentParams struct {
-	UserID   primitive.ObjectID `json:"userID"`
 	PostID   primitive.ObjectID `json:"postID"`
 	ParentID primitive.ObjectID `json:"parentID,omitempty"`
 	Content  string             `json:"content"`
@@ -29,7 +28,6 @@ type CreateCommentParams struct {
 
 func NewCommentsFromParams(param CreateCommentParams) *Comment {
 	return &Comment{
-		UserID:   param.UserID,
 		PostID:   param.PostID,
 		ParentID: param.ParentID,
 		Content:  param.Content,

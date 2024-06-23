@@ -25,7 +25,7 @@ func NewUserApp(db *db.DBS) *UserApp {
 func (u *UserApp) HandleCreateUser(w http.ResponseWriter, r *http.Request) error {
 	userCreateParams := types.CreateUserParams{}
 	if err := json.NewDecoder(r.Body).Decode(&userCreateParams); err != nil {
-		return NewErrorResp(http.StatusBadRequest, "please chech the request params")
+		return ErrorMessage(http.StatusBadRequest, "please chech the request params")
 	}
 	msg := userCreateParams.Validate()
 	if len(msg) != 0 {
@@ -34,7 +34,7 @@ func (u *UserApp) HandleCreateUser(w http.ResponseWriter, r *http.Request) error
 	user := types.NewUserFormParams(userCreateParams)
 	userresp, err := u.db.Uc.CreateUser(r.Context(), user)
 	if err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return WriteJson(w, http.StatusOK, map[string]any{
 		"status": http.StatusOK,
@@ -46,11 +46,11 @@ func (m *UserApp) HandleGetUserByID(w http.ResponseWriter, r *http.Request) erro
 	id := chi.URLParam(r, "uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewErrorResp(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	user, err := m.db.Uc.GetUserByID(r.Context(), uid)
 	if err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return WriteJson(w, http.StatusOK, map[string]any{
 		"status": http.StatusOK,
@@ -68,10 +68,10 @@ func (m *UserApp) HandleDeleteUserByID(w http.ResponseWriter, r *http.Request) e
 	// }
 	userInfo, ok := r.Context().Value(middleware.CtxUserInfoKey).(*types.UserInfo)
 	if !ok {
-		return NewErrorResp(http.StatusNonAuthoritativeInfo, "user need login")
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
 	if err := m.db.Uc.DeleteUserByID(r.Context(), userInfo.UserID); err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return WriteJson(w, http.StatusOK, map[string]any{
 		"status":  http.StatusOK,
@@ -89,11 +89,11 @@ func (m *UserApp) HandleUpdateUserByID(w http.ResponseWriter, r *http.Request) e
 	// }
 	userInfo, ok := r.Context().Value(middleware.CtxUserInfoKey).(*types.UserInfo)
 	if !ok {
-		return NewErrorResp(http.StatusNonAuthoritativeInfo, "user need login")
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
 	updateUserParams := types.UpdateUserParams{}
 	if err := json.NewDecoder(r.Body).Decode(&updateUserParams); err != nil {
-		return NewErrorResp(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	msg := updateUserParams.Validate()
 	if len(msg) != 0 {
@@ -101,7 +101,7 @@ func (m *UserApp) HandleUpdateUserByID(w http.ResponseWriter, r *http.Request) e
 	}
 	user, err := m.db.Uc.UpdateUserByID(r.Context(), userInfo.UserID, &updateUserParams)
 	if err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return WriteJson(w, http.StatusOK, user)
 }

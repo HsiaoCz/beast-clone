@@ -27,12 +27,12 @@ func (p *PostApp) HandleCreatePost(w http.ResponseWriter, r *http.Request) error
 	)
 	userInfo, ok := r.Context().Value(middleware.CtxUserInfoKey).(*types.UserInfo)
 	if !ok {
-		return NewErrorResp(http.StatusNonAuthoritativeInfo, "user need login")
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
 	// TODO if user not login
 	// need redirect to userlogin page
 	if err := json.NewDecoder(r.Body).Decode(&postCreateParam); err != nil {
-		return NewErrorResp(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 
 	post := types.NewPostFromParams(postCreateParam)
@@ -40,7 +40,7 @@ func (p *PostApp) HandleCreatePost(w http.ResponseWriter, r *http.Request) error
 
 	postResp, err := p.db.Pc.CreatePost(r.Context(), post)
 	if err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 
 	return WriteJson(w, http.StatusOK, postResp)
@@ -50,10 +50,10 @@ func (p *PostApp) HandleDeletePost(w http.ResponseWriter, r *http.Request) error
 	paramid := chi.URLParam(r, "pid")
 	postID, err := primitive.ObjectIDFromHex(paramid)
 	if err != nil {
-		return NewErrorResp(http.StatusBadRequest, "invalid post id")
+		return ErrorMessage(http.StatusBadRequest, "invalid post id")
 	}
 	if err := p.db.Pc.DeletePostByID(r.Context(), postID); err != nil {
-		return NewErrorResp(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return WriteJson(w, http.StatusOK, map[string]any{
 		"status":  http.StatusOK,
