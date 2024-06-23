@@ -6,3 +6,4 @@ app:
   secret: "xiaofanyi"
   jwtSecret: "little fan"
   postColl: "posts"
+  commentColl: "comments"

@@ -18,13 +18,14 @@ type Config struct {
 }
 
 type AppConf struct {
-	Port      string `mapstructure:"port"`
-	MongoUri  string `mapstructure:"mongoUri"`
-	DBName    string `mapstructure:"dbname"`
-	UserColl  string `mapstructure:"userColl"`
-	Secert    string `mapstructure:"secret"`
-	JWTSecert string `mapstructure:"jwtSecret"`
-	PostColl  string `mapstructure:"postColl"`
+	Port        string `mapstructure:"port"`
+	MongoUri    string `mapstructure:"mongoUri"`
+	DBName      string `mapstructure:"dbname"`
+	UserColl    string `mapstructure:"userColl"`
+	Secert      string `mapstructure:"secret"`
+	JWTSecert   string `mapstructure:"jwtSecret"`
+	PostColl    string `mapstructure:"postColl"`
+	CommentColl string `mapstructure:"commentColl"`
 }
 
 func ParseConfig() error {

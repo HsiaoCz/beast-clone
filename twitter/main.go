@@ -36,16 +36,19 @@ func main() {
 	}()
 
 	var (
-		logger        = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-		port          = etc.Conf.App.Port
-		userColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.UserColl)
-		postColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.PostColl)
-		mongoUserCase = db.NewMongoUserCase(client, userColl)
-		mongoPostCase = db.NewMongoPostStore(client, postColl)
-		dbs           = &db.DBS{Uc: mongoUserCase, Pc: mongoPostCase}
-		userApp       = app.NewUserApp(dbs)
-		postApp       = app.NewPostApp(dbs)
-		router        = chi.NewMux()
+		logger           = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
+		port             = etc.Conf.App.Port
+		userColl         = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.UserColl)
+		postColl         = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.PostColl)
+		commentColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.CommentColl)
+		mongoUserCase    = db.NewMongoUserCase(client, userColl)
+		mongoPostCase    = db.NewMongoPostStore(client, postColl)
+		mongoCommentCase = db.NewMongoCommentStore(client, commentColl)
+		dbs              = &db.DBS{Uc: mongoUserCase, Pc: mongoPostCase, CS: mongoCommentCase}
+		userApp          = app.NewUserApp(dbs)
+		postApp          = app.NewPostApp(dbs)
+		commentApp       = app.NewCommentApp(dbs)
+		router           = chi.NewMux()
 	)
 
 	slog.SetDefault(logger)
@@ -64,7 +67,12 @@ func main() {
 	// TODO need group router
 	// posts handlers need auth middleware
 	router.Post("/posts", app.TransferHandlerfunc(postApp.HandleCreatePost))
-	router.Delete("/posts", app.TransferHandlerfunc(postApp.HandleDeletePost))
+	router.Delete("/posts/{pid}", app.TransferHandlerfunc(postApp.HandleDeletePost))
+
+	// TODO need group router comment
+	// posts handlers need auth middleware
+	router.Post("/comments", app.TransferHandlerfunc(commentApp.HandleCreateComment))
+	router.Delete("/comments/{cid}", app.TransferHandlerfunc(commentApp.HandleDeleteCommentByID))
 
 	slog.Info("the server is running", "listen address", port)
 	http.ListenAndServe(port, router)

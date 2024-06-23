@@ -9,3 +9,6 @@ test:
 
 gen:
 	@templ generate
+
+mongo:
+	@docker start mongo
