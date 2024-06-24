@@ -3,6 +3,7 @@ package scripts
 import (
 	"context"
 	"errors"
+	"os"
 
 	"github.com/HsiaoCz/beast-clone/twitter/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,9 +13,12 @@ import (
 )
 
 var (
-	mongoUrl = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
-	dbname   = "twtest"
-	userColl = "users"
+	// mongoUrl = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
+	mongoUrl = os.Getenv("MONGOURL")
+	// dbname   = "twtest"
+	dbname = os.Getenv("DBNAME")
+	// userColl = "users"
+	userColl = os.Getenv("userColl")
 )
 
 type TestUserStore struct {

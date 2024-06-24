@@ -9,22 +9,21 @@ import (
 
 	"github.com/HsiaoCz/beast-clone/twitter/app"
 	"github.com/HsiaoCz/beast-clone/twitter/db"
-	"github.com/HsiaoCz/beast-clone/twitter/etc"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
-	if err := etc.ParseConfig(); err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
-
 	ctx := context.Background()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(etc.Conf.App.MongoUri))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGOURL")))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,10 +36,14 @@ func main() {
 
 	var (
 		logger           = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-		port             = etc.Conf.App.Port
-		userColl         = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.UserColl)
-		postColl         = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.PostColl)
-		commentColl      = client.Database(etc.Conf.App.DBName).Collection(etc.Conf.App.CommentColl)
+		port             = os.Getenv("PORT")
+		dbname           = os.Getenv("DBNAME")
+		userCollName     = os.Getenv("USERCOLL")
+		postCollName     = os.Getenv("POSTCOLL")
+		commentCollName  = os.Getenv("COMMENTCOLL")
+		userColl         = client.Database(dbname).Collection(userCollName)
+		postColl         = client.Database(dbname).Collection(postCollName)
+		commentColl      = client.Database(dbname).Collection(commentCollName)
 		mongoUserCase    = db.NewMongoUserCase(client, userColl)
 		mongoPostCase    = db.NewMongoPostStore(client, postColl)
 		mongoCommentCase = db.NewMongoCommentStore(client, commentColl)

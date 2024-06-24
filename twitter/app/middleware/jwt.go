@@ -3,9 +3,9 @@ package middleware
 import (
 	"errors"
 	"log/slog"
+	"os"
 	"time"
 
-	"github.com/HsiaoCz/beast-clone/hotel/conf"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -23,7 +23,7 @@ type myClaims struct {
 // 定义过期时间
 const TokenExpireDuration = time.Hour * 24 * 3
 
-var mySecret = []byte(conf.Conf.App.JWTSecert)
+var mySecret = []byte(os.Getenv("JWTSECRET"))
 
 // GenToken 生成JWT
 func GenToken(userID primitive.ObjectID, email string, isAdmin bool) (string, error) {

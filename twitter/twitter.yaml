@@ -1,9 +1,0 @@
-app:
-  port: ":3003"
-  mongoUri: "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5"
-  dbname: "twbest"
-  userColl: "users"
-  secret: "xiaofanyi"
-  jwtSecret: "little fan"
-  postColl: "posts"
-  commentColl: "comments"

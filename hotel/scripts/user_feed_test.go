@@ -4,21 +4,22 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/HsiaoCz/beast-clone/hotel/conf"
 	"github.com/HsiaoCz/beast-clone/hotel/types"
+	"github.com/joho/godotenv"
 )
 
 func encryptPassword(oPassword string) string {
 	h := md5.New()
-	h.Write([]byte(conf.Conf.App.Secert))
+	h.Write([]byte(os.Getenv("MD5SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 
 func TestCreateUser(t *testing.T) {
-	if err := conf.ParseConfig(); err != nil {
+	if err := godotenv.Load("../.env"); err != nil {
 		t.Fatal(err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
