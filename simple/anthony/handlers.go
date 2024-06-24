@@ -16,4 +16,15 @@ func (u *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) 
 	fmt.Println(user)
 
 	return WriteJSON(w, http.StatusOK, &user)
+
+}
+
+func (u *UserHandlers) HandleDeleteUser(w http.ResponseWriter, r *http.Request) error {
+	id := r.PathValue("uid")
+	fmt.Println(id)
+
+	return WriteJSON(w, http.StatusOK, map[string]any{
+		"status":  http.StatusOK,
+		"message": "delete user success",
+	})
 }
