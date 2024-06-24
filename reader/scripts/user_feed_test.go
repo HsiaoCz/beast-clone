@@ -4,17 +4,17 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func encryptPassword(oPassword string) string {
 	h := md5.New()
-	h.Write([]byte(conf.Conf.App.Secert))
+	h.Write([]byte(os.Getenv("MD5SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 

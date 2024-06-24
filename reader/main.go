@@ -3,25 +3,26 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	v1 "github.com/HsiaoCz/beast-clone/reader/api/v1"
-	"github.com/HsiaoCz/beast-clone/reader/conf"
 	"github.com/HsiaoCz/beast-clone/reader/storage"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
-	if err := conf.ParseConfig(); err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
 	var (
-		mongoURL     = conf.Conf.App.MongoUri
-		dbName       = conf.Conf.App.DBName
-		userCollName = conf.Conf.App.UserColl
-		port         = conf.Conf.App.Port
+		mongoURL     = os.Getenv("MONGOURL")
+		dbName       = os.Getenv("DBNAME")
+		userCollName = os.Getenv("USERCOLL")
+		port         = os.Getenv("PORT")
 		ctx          = context.Background()
 	)
 
