@@ -36,7 +36,7 @@ func TestCreateUser(t *testing.T) {
 		{FirstName: "bionss", LastName: "zssda", Email: "cssdscs@gmail.com", EncryptedPassword: encryptPassword("sjfjsjs2334"), IsAdmin: false},
 		{FirstName: "sncssd", LastName: "slksks", Email: "scsdsc@gmail.com", EncryptedPassword: encryptPassword("scvds2w323"), IsAdmin: false},
 	}
-	feed, err := Newfeed()
+	feed, err := NewUserfeed()
 	if err != nil {
 		t.Fatal(err)
 	}

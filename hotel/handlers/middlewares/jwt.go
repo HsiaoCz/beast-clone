@@ -10,9 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// CustomCliams 自定义声明类型 并内嵌jwt.RegisteredClaims
-// jwt包自带的jwt.RegisteredClaims只包含了官方字段
-
+// customer the jwt claims
+// contain the userID and email
+// we can use userID verify the user
+// question: the email hava to exist?
 type myClaims struct {
 	UserID  primitive.ObjectID `json:"userID"`
 	Email   string             `json:"email"`
@@ -20,12 +21,12 @@ type myClaims struct {
 	jwt.StandardClaims
 }
 
-// 定义过期时间
+// define expire time
 const TokenExpireDuration = time.Hour * 24 * 3
 
 var mySecret = []byte(os.Getenv("JWTSECRET"))
 
-// GenToken 生成JWT
+// GenToken generate JWT
 func GenToken(userID primitive.ObjectID, email string, isAdmin bool) (string, error) {
 	claims := myClaims{
 		userID,

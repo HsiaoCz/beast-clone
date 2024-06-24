@@ -12,20 +12,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Feed struct {
+type UserFeed struct {
 	client *mongo.Client
 	coll   *mongo.Collection
 }
 
-func Newfeed() (*Feed, error) {
+func NewUserfeed() (*UserFeed, error) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(os.Getenv("MONGORUL")))
 	if err != nil {
 		return nil, err
 	}
-	return &Feed{client: client, coll: client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))}, nil
+	return &UserFeed{client: client, coll: client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))}, nil
 }
 
-func (f *Feed) CreateUser(ctx context.Context, user *types.User) (*types.User, error) {
+func (f *UserFeed) CreateUser(ctx context.Context, user *types.User) (*types.User, error) {
 	var check types.User
 	filter := bson.D{{Key: "email", Value: user.Email}}
 	if err := f.coll.FindOne(ctx, filter).Decode(&check); err != mongo.ErrNoDocuments {
