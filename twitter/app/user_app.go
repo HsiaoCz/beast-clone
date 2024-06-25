@@ -105,3 +105,31 @@ func (m *UserApp) HandleUpdateUserByID(w http.ResponseWriter, r *http.Request) e
 	}
 	return WriteJson(w, http.StatusOK, user)
 }
+
+func (u *UserApp) HandleFollowingUser(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleUnfollowingUser(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleBlackPerson(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleUnBlackPerson(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleGetFollowings(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleGetFollowers(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (u *UserApp) HandleGetBlacks(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}

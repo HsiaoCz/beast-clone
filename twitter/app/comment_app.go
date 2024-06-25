@@ -62,3 +62,16 @@ func (m *CommentApp) HandleDeleteCommentByID(w http.ResponseWriter, r *http.Requ
 		"message": "delete comment success",
 	})
 }
+
+func (m *CommentApp) HandleGetCommentByPostID(w http.ResponseWriter, r *http.Request) error {
+	id := r.PathValue("pid")
+	pid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	comments, err := m.db.CS.GetCommentsByPostID(r.Context(), pid)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, comments)
+}

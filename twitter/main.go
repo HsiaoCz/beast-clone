@@ -70,11 +70,13 @@ func main() {
 	// TODO need group router
 	// posts handlers need auth middleware
 	router.Post("/posts", app.TransferHandlerfunc(postApp.HandleCreatePost))
+	router.Get("/posts/{uid}", app.TransferHandlerfunc(postApp.HandleGetPostsByUserID))
 	router.Delete("/posts/{pid}", app.TransferHandlerfunc(postApp.HandleDeletePost))
 
 	// TODO need group router comment
 	// posts handlers need auth middleware
 	router.Post("/comments", app.TransferHandlerfunc(commentApp.HandleCreateComment))
+	router.Get("/comments/{pid}", app.TransferHandlerfunc(commentApp.HandleGetCommentByPostID))
 	router.Delete("/comments/{cid}", app.TransferHandlerfunc(commentApp.HandleDeleteCommentByID))
 
 	slog.Info("the server is running", "listen address", port)

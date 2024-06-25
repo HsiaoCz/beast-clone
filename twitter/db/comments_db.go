@@ -11,9 +11,13 @@ import (
 
 type CommentCaser interface {
 	CreateComment(context.Context, *types.Comment) (*types.Comment, error)
-	// DeleteCommentByID need to ids
+	// DeleteCommentByID need two ids
 	// userID and commentID
 	DeleteCommentByID(context.Context, primitive.ObjectID, primitive.ObjectID) error
+	GetCommentsByPostID(context.Context, primitive.ObjectID) ([]*types.Comment, error)
+	// GetCommentsByPostIDAndParentID need two ids
+	// postID and parentID
+	GetCommentsByPostIDAndParentID(context.Context, primitive.ObjectID, primitive.ObjectID) ([]*types.Comment, error)
 }
 
 type MongoCommentStore struct {
@@ -50,4 +54,35 @@ func (m *MongoCommentStore) DeleteCommentByID(ctx context.Context, userID primit
 		return mongo.ErrNoDocuments
 	}
 	return nil
+}
+
+func (m *MongoCommentStore) GetCommentsByPostID(ctx context.Context, postID primitive.ObjectID) ([]*types.Comment, error) {
+	filter := bson.D{
+		{Key: "postID", Value: postID},
+	}
+	cusor, err := m.coll.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	var comments []*types.Comment
+	if err := cusor.All(ctx, comments); err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (m *MongoCommentStore) GetCommentsByPostIDAndParentID(ctx context.Context, postID primitive.ObjectID, parentID primitive.ObjectID) ([]*types.Comment, error) {
+	filter := bson.M{
+		"postID":   postID,
+		"parentID": parentID,
+	}
+	cur, err := m.coll.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	var comments []*types.Comment
+	if err := cur.All(ctx, comments); err != nil {
+		return nil, err
+	}
+	return comments, nil
 }

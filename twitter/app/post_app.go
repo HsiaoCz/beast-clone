@@ -60,3 +60,16 @@ func (p *PostApp) HandleDeletePost(w http.ResponseWriter, r *http.Request) error
 		"message": "delete post success",
 	})
 }
+
+func (p *PostApp) HandleGetPostsByUserID(w http.ResponseWriter, r *http.Request) error {
+	id := r.PathValue("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	posts, err := p.db.Pc.GetPostsByUserID(r.Context(), uid)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, posts)
+}

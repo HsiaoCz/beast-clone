@@ -13,6 +13,7 @@ import (
 type PostCaser interface {
 	CreatePost(context.Context, *types.Post) (*types.Post, error)
 	DeletePostByID(context.Context, primitive.ObjectID) error
+	GetPostsByUserID(context.Context, primitive.ObjectID) ([]*types.Post, error)
 }
 
 type MongoPostStore struct {
@@ -50,4 +51,19 @@ func (m *MongoPostStore) DeletePostByID(ctx context.Context, pid primitive.Objec
 		return errors.New("no record")
 	}
 	return nil
+}
+
+func (m *MongoPostStore) GetPostsByUserID(ctc context.Context, userID primitive.ObjectID) ([]*types.Post, error) {
+	filter := bson.D{
+		{Key: "userID", Value: userID},
+	}
+	cusor, err := m.coll.Find(ctc, filter)
+	if err != nil {
+		return nil, err
+	}
+	var posts []*types.Post
+	if err := cusor.All(ctc, posts); err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
