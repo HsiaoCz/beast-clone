@@ -7,8 +7,9 @@ server:
     timeout: 1s
 data:
   database:
-    driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+    mongoUrl: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5
+    dbname: latency
+    coll: users
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s

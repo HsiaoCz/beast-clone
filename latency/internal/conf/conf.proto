@@ -27,8 +27,9 @@ message Server {
 
 message Data {
   message Database {
-    string driver = 1;
-    string source = 2;
+    string mongoUrl = 1;
+    string dbname = 2;
+    string coll=3;
   }
   message Redis {
     string network = 1;

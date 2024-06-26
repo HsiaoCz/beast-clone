@@ -2,29 +2,34 @@ syntax = "proto3";
 
 package helloworld.v1;
 
-import "google/api/annotations.proto";
-
 option go_package = "latency/api/helloworld/v1;v1";
-option java_multiple_files = true;
-option java_package = "dev.kratos.api.helloworld.v1";
-option java_outer_classname = "HelloworldProtoV1";
 
 // The greeting service definition.
 service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {
-    option (google.api.http) = {
-      get: "/helloworld/{name}"
-    };
-  }
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){}
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse){}
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){}
+  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse){}
 }
+// create user request
+message CreateUserRequest{}
+// create user response
+message CreateUserResponse{}
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
 
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
-}
+// update user request
+message UpdateUserRequest{}
+// update user response
+message UpdateUserResponse{}
+
+
+// delete user request
+message DeleteUserRequest{}
+// delete user response
+message DeleteUserResponse{}
+
+
+// get user by identity request
+message GetUserByIDRequest{}
+// get user by identity response
+message GetUserByIDResponse{}

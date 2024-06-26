@@ -32,10 +32,6 @@ func (r *greeterRepo) FindByID(context.Context, int64) (*biz.Greeter, error) {
 	return nil, nil
 }
 
-func (r *greeterRepo) ListByHello(context.Context, string) ([]*biz.Greeter, error) {
-	return nil, nil
-}
-
 func (r *greeterRepo) ListAll(context.Context) ([]*biz.Greeter, error) {
 	return nil, nil
 }
