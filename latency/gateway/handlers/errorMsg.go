@@ -5,13 +5,13 @@ type ErrorMsg struct {
 	Message string `json:"message"`
 }
 
-func ErrorMessage(status int, message string) ErrorMsg {
+func (e ErrorMsg) Error() string {
+	return e.Message
+}
+
+func ErrorMessage(status int, message string) error {
 	return ErrorMsg{
 		Status:  status,
 		Message: message,
 	}
-}
-
-func (a ErrorMsg) Error() string {
-	return a.Message
 }

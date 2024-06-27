@@ -26,7 +26,7 @@ func NewUserHandlers(store *storage.Store) *UserHandlers {
 func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	req := types.CreateUserParam{}
 	if err := c.BodyParser(&req); err != nil {
-		return NewAPIError(http.StatusBadRequest, "please check the request params")
+		return ErrorMessage(http.StatusBadRequest, "please check the request params")
 	}
 	msg := req.ValidateCreateUserParam()
 	if len(msg) != 0 {
@@ -35,7 +35,7 @@ func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	user := types.NewUserFromReq(req)
 	result, err := u.store.User.CreateUser(c.Context(), user)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "create user success!",
@@ -48,19 +48,19 @@ func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 func (u *UserHandlers) HandleUserLogin(c *fiber.Ctx) error {
 	userloginReq := types.UserLoginParams{}
 	if err := c.BodyParser(&userloginReq); err != nil {
-		return NewAPIError(http.StatusBadRequest, "please check the request params")
+		return ErrorMessage(http.StatusBadRequest, "please check the request params")
 	}
 	params := userloginReq.EncryptedPassword()
 	user, err := u.store.User.GetUserByEmail(c.Context(), params.Email)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	if params.Password != user.EncryptedPassword {
-		return NewAPIError(http.StatusBadRequest, "please check the email or password")
+		return ErrorMessage(http.StatusBadRequest, "please check the email or password")
 	}
 	token, err := middlewares.GenToken(user.ID, user.Email, user.IsAdmin)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
@@ -73,11 +73,11 @@ func (u *UserHandlers) HandleGetUserByID(c *fiber.Ctx) error {
 	id := c.Query("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, "query param is invalid")
+		return ErrorMessage(http.StatusBadRequest, "query param is invalid")
 	}
 	user, err := u.store.User.GetUserByID(c.Context(), uid)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "get user success!",
@@ -89,10 +89,10 @@ func (u *UserHandlers) HandleDeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, "query param is invalid")
+		return ErrorMessage(http.StatusBadRequest, "query param is invalid")
 	}
 	if err := u.store.User.DeleteUserByID(c.Context(), uid); err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "delete user success!",
@@ -104,7 +104,7 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, "please check the uid param")
+		return ErrorMessage(http.StatusBadRequest, "please check the uid param")
 	}
 	up := types.UpdateUserParams{}
 	msg := up.ValidateUpdateUserParams()
@@ -112,11 +112,11 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(msg)
 	}
 	if err := c.BodyParser(&up); err != nil {
-		return NewAPIError(http.StatusBadRequest, "please check the update params")
+		return ErrorMessage(http.StatusBadRequest, "please check the update params")
 	}
 	user, err := u.store.User.UpdateUser(c.Context(), uid, &up)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,

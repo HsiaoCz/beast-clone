@@ -20,10 +20,10 @@ import (
 
 var config = fiber.Config{
 	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		if apiError, ok := err.(handlers.APIError); ok {
+		if apiError, ok := err.(handlers.ErrorMsg); ok {
 			return c.Status(apiError.Status).JSON(&apiError)
 		}
-		aError := handlers.NewAPIError(http.StatusInternalServerError, err.Error())
+		aError := handlers.ErrorMessage(http.StatusInternalServerError, err.Error())
 		return c.Status(aError.Status).JSON(&aError)
 	},
 }

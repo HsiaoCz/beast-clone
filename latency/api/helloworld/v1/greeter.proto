@@ -11,10 +11,24 @@ service Greeter {
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){}
   rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse){}
 }
+message User {
+  string id=1;
+  string firstName=2;
+  string email=3;
+  string content=4;
+  string avatar=5;
+  string password=6;
+  string createdAt=7;
+  bool  isAdmin=8;
+}
 // create user request
-message CreateUserRequest{}
+message CreateUserRequest{
+  User userParam=1;
+}
 // create user response
-message CreateUserResponse{}
+message CreateUserResponse{
+  User userResp=1;
+}
 
 
 // update user request

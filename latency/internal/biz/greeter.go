@@ -2,10 +2,12 @@ package biz
 
 import (
 	"context"
+	"time"
 
 	v1 "github.com/HsiaoCz/beast-clone/latency/api/helloworld/v1"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -14,16 +16,24 @@ var (
 )
 
 // Greeter is a Greeter model.
-type Greeter struct {
-	Hello string
+type User struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	FirstName string             `bson:"firstName"`
+	LastName  string             `bson:"lastName"`
+	Email     string             `bson:"lastName"`
+	Content   string             `bson:"content"`
+	Avatar    string             `bson:"avatar"`
+	CreatedAt time.Time          `bson:"createdAt"`
+	Password  string             `bson:"password"`
+	IsAdmin   bool               `bson:"isAdmin"`
 }
 
 // GreeterRepo is a Greater repo.
 type GreeterRepo interface {
-	Save(context.Context, *Greeter) (*Greeter, error)
-	Update(context.Context, *Greeter) (*Greeter, error)
-	FindByID(context.Context, int64) (*Greeter, error)
-	ListAll(context.Context) ([]*Greeter, error)
+	Save(context.Context, *User) (*User, error)
+	Update(context.Context, *User) (*User, error)
+	FindByID(context.Context, int64) (*User, error)
+	ListAll(context.Context) ([]*User, error)
 }
 
 // GreeterUsecase is a Greeter usecase.
@@ -38,7 +48,7 @@ func NewGreeterUsecase(repo GreeterRepo, logger log.Logger) *GreeterUsecase {
 }
 
 // CreateGreeter creates a Greeter, and returns the new Greeter.
-func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *Greeter) (*Greeter, error) {
-	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Hello)
-	return uc.repo.Save(ctx, g)
+func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, u *User) (*User, error) {
+	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", u.FirstName)
+	return uc.repo.Save(ctx, u)
 }
