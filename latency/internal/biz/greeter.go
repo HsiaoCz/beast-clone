@@ -17,22 +17,22 @@ var (
 
 // Greeter is a Greeter model.
 type User struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	FirstName string             `bson:"firstName"`
-	LastName  string             `bson:"lastName"`
-	Email     string             `bson:"lastName"`
-	Content   string             `bson:"content"`
-	Avatar    string             `bson:"avatar"`
-	CreatedAt time.Time          `bson:"createdAt"`
-	Password  string             `bson:"password"`
-	IsAdmin   bool               `bson:"isAdmin"`
+	ID        string    `bson:"_id,omitempty"`
+	FirstName string    `bson:"firstName"`
+	LastName  string    `bson:"lastName"`
+	Email     string    `bson:"lastName"`
+	Content   string    `bson:"content"`
+	Avatar    string    `bson:"avatar"`
+	CreatedAt time.Time `bson:"createdAt"`
+	Password  string    `bson:"password"`
+	IsAdmin   bool      `bson:"isAdmin"`
 }
 
 // GreeterRepo is a Greater repo.
 type GreeterRepo interface {
 	Save(context.Context, *User) (*User, error)
 	Update(context.Context, *User) (*User, error)
-	FindByID(context.Context, int64) (*User, error)
+	FindByID(context.Context, primitive.ObjectID) (*User, error)
 	ListAll(context.Context) ([]*User, error)
 }
 
