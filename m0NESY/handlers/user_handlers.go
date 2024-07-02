@@ -5,7 +5,7 @@ import "net/http"
 type UserHandlers struct{}
 
 func (u *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	return ErrorMessage(http.StatusNotFound, "there no this record")
 }
 
 func (u *UserHandlers) HandleGetUserByID(w http.ResponseWriter, r *http.Request) error {

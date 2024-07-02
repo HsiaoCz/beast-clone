@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/beast-clone/m0NESY/handlers"
 	"github.com/HsiaoCz/beast-clone/m0NESY/logger"
 	"github.com/joho/godotenv"
 )
@@ -16,11 +17,18 @@ func main() {
 	if err := logger.InitLogger("./info.log", "./debug.log", "./error.log", "./warn.log"); err != nil {
 		log.Fatal(err)
 	}
+	var (
+		port         = os.Getenv("PORT")
+		userHandlers = &handlers.UserHandlers{}
+		router       = http.NewServeMux()
+	)
 
-	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello My Man"))
-	})
-	logger.Logger.Info("http server is running", "listen addresss", os.Getenv("PORT"))
-	http.ListenAndServe(os.Getenv("PORT"), nil)
+	{
+		// router
+		router.HandleFunc("GET /user/hello", handlers.TransferHandlerfunc(userHandlers.HandleCreateUser))
+	}
+
+	logger.Logger.Info("http server is running", "listen addresss", port)
+	
+	http.ListenAndServe(os.Getenv("PORT"), router)
 }
