@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
-
-	"github.com/HsiaoCz/beast-clone/m0NESY/logger"
 )
 
 var StatusCode = &Status{Code: http.StatusOK}
@@ -20,7 +19,7 @@ type Map map[string]any
 func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := h(w, r); err != nil {
-			defer logger.Logger.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
+			defer slog.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
 			if e, ok := err.(ErrorMsg); ok {
 				StatusCode.Code = e.Status
 				WriteJSON(w, e.Status, &e)
@@ -33,7 +32,7 @@ func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 				WriteJSON(w, errMsg.Status, &errMsg)
 			}
 		}
-		logger.Logger.Info("new request coming", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+		slog.Info("new request coming", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
 	}
 }
 

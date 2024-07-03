@@ -1,63 +1,76 @@
 package logger
 
 import (
-	"io"
-	"log/slog"
 	"os"
+	"strconv"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var Logger *logger
+var lg *zap.Logger
 
-type logger struct {
-	infof  io.Writer
-	debugf io.Writer
-	errf   io.Writer
-	warnf  io.Writer
-	log    *slog.Logger
+type logConfig struct {
+	Level      string
+	Filename   string
+	MaxSize    int
+	MaxBackups int
+	MaxAge     int
 }
 
-func InitLogger(infoFileName string, debugFileName string, errFileName string, warnFileName string) error {
-	infoFile, err := os.OpenFile(infoFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+// InitLogger 初始化Logger
+func InitLogger() (err error) {
+	maxsize, err := strconv.Atoi(os.Getenv("LOG_MAXSIZE"))
 	if err != nil {
 		return err
 	}
-	debugFile, err := os.OpenFile(debugFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	maxBackups, err := strconv.Atoi(os.Getenv("LOG_MAXBACKUPS"))
 	if err != nil {
 		return err
 	}
-	errFile, err := os.OpenFile(errFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	maxAge, err := strconv.Atoi(os.Getenv("LOG_MAXAGE"))
 	if err != nil {
 		return err
 	}
-	warnFile, err := os.OpenFile(warnFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	cfg := logConfig{
+		Level:      os.Getenv("LOG_LEVEL"),
+		Filename:   os.Getenv("LOG_FILENAME"),
+		MaxSize:    maxsize,
+		MaxBackups: maxBackups,
+		MaxAge:     maxAge,
+	}
+	writeSyncer := getLogWriter(cfg.Filename, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge)
+	encoder := getEncoder()
+	var l = new(zapcore.Level)
+	err = l.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
-		return err
+		return
 	}
-	logger := &logger{
-		infof:  infoFile,
-		debugf: debugFile,
-		errf:   errFile,
-		warnf:  warnFile,
+	core := zapcore.NewCore(encoder, writeSyncer, l)
+
+	lg = zap.New(core, zap.AddCaller())
+	zap.ReplaceGlobals(lg) // 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
+	return
+}
+
+func getEncoder() zapcore.Encoder {
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoderConfig.TimeKey = "time"
+	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
+	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
+	return zapcore.NewJSONEncoder(encoderConfig)
+}
+
+func getLogWriter(filename string, maxSize, maxBackup, maxAge int) zapcore.WriteSyncer {
+	lumberJackLogger := &lumberjack.Logger{
+		Filename:   filename,
+		MaxSize:    maxSize,
+		MaxBackups: maxBackup,
+		MaxAge:     maxAge,
 	}
-	Logger = logger
-	return nil
-}
-
-func (l *logger) Info(msg string, args ...any) {
-	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.infof, os.Stdout), &slog.HandlerOptions{}))
-	l.log.Info(msg, args...)
-}
-
-func (l *logger) Debug(msg string, args ...any) {
-	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.debugf, os.Stdout), &slog.HandlerOptions{}))
-	l.log.Debug(msg, args...)
-}
-func (l *logger) Error(msg string, args ...any) {
-	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.errf, os.Stdout), &slog.HandlerOptions{}))
-	l.log.Error(msg, args...)
-}
-
-func (l *logger) Warn(msg string, args ...any) {
-	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.warnf, os.Stdout), &slog.HandlerOptions{}))
-	l.log.Warn(msg, args...)
+	return zapcore.AddSync(lumberJackLogger)
 }
