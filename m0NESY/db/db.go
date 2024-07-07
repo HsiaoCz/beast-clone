@@ -1,21 +1,23 @@
 package db
 
 import (
+	"log"
 	"os"
 
 	"github.com/anthdm/superkit/db"
-	"github.com/anthdm/superkit/kit"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 
 	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/sqlitedialect"
-	"github.com/uptrace/bun/extra/bundebug"
 )
 
-// TODO this name need change
-// but now use this
-var Query *bun.DB
+// use signel pattern
+var dbInstance *gorm.DB
+
+// get the db
+func Get() *gorm.DB {
+	return dbInstance
+}
 
 func InitDB() error {
 	config := db.Config{
@@ -25,13 +27,28 @@ func InitDB() error {
 		User:     os.Getenv("DB_USER"),
 		Host:     os.Getenv("DB_HOST"),
 	}
-	db, err := db.NewSQL(config)
+	dbinst, err := db.NewSQL(config)
 	if err != nil {
 		return err
 	}
-	Query = bun.NewDB(db, sqlitedialect.New())
-	if kit.IsDevelopment() {
-		Query.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	// Based on the driver create the corresponding DB instance.
+	// By default, the SuperKit boilerplate comes with a pre-configured
+	// ORM called Gorm. https://gorm.io.
+	//
+	// You can change this to any other DB interaction tool
+	// of your liking. EG:
+	// - uptrace bun -> https://bun.uptrace.dev
+	// - SQLC -> https://github.com/sqlc-dev/sqlc
+	// - gojet -> https://github.com/go-jet/jet
+	switch config.Driver {
+	case db.DriverSqlite3:
+		dbInstance, err = gorm.Open(sqlite.New(sqlite.Config{
+			Conn: dbinst,
+		}))
+	case db.DriverMysql:
+		// ...
+	default:
+		log.Fatal("invalid driver:", config.Driver)
 	}
-	return nil
+	return err
 }

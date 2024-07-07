@@ -17,3 +17,10 @@ type User struct {
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"-"`
 }
+
+type CreateUserParams struct {
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	VerifyPassword string `json:"verify_password"`
+	Email          string `json:"email"`
+}
