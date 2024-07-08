@@ -8,14 +8,17 @@ import (
 
 	"github.com/HsiaoCz/beast-clone/wechat/handlers"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-	slog.SetDefault(logger)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
 	userHandlers := &handlers.UserHandlers{}
 
 	router := http.NewServeMux()
