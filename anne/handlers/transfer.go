@@ -1,4 +1,4 @@
-package app
+package handlers
 
 import (
 	"encoding/json"
@@ -10,11 +10,18 @@ import (
 
 var StatusCode = &Status{Code: http.StatusOK}
 
+type Handlerfunc func(w http.ResponseWriter, r *http.Request) error
+
 type Status struct {
 	Code int
 }
 
-type Handlerfunc func(w http.ResponseWriter, r *http.Request) error
+func WriteJSON(w http.ResponseWriter, code int, v any) error {
+	w.Header().Set("Content-Type", "application")
+	w.WriteHeader(code)
+	StatusCode.Code = code
+	return json.NewEncoder(w).Encode(v)
+}
 
 func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -30,14 +37,14 @@ func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 			}()
 			if e, ok := err.(ErrorMsg); ok {
 				StatusCode.Code = e.Status
-				WriteJson(w, e.Status, &e)
+				WriteJSON(w, e.Status, &e)
 			} else {
 				errMsg := ErrorMsg{
 					Status:  http.StatusInternalServerError,
 					Message: err.Error(),
 				}
-				StatusCode.Code = e.Status
-				WriteJson(w, errMsg.Status, &errMsg)
+				StatusCode.Code = errMsg.Status
+				WriteJSON(w, errMsg.Status, &errMsg)
 			}
 		}
 		logrus.WithFields(logrus.Fields{
@@ -50,9 +57,18 @@ func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	}
 }
 
-func WriteJson(w http.ResponseWriter, code int, v any) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	StatusCode.Code = code
-	return json.NewEncoder(w).Encode(v)
+type ErrorMsg struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+func (e ErrorMsg) Error() string {
+	return e.Message
+}
+
+func ErrorMessage(status int, message string) ErrorMsg {
+	return ErrorMsg{
+		Status:  status,
+		Message: message,
+	}
 }

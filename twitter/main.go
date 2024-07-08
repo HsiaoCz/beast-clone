@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"log/slog"
 	"net/http"
 	"os"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -35,7 +35,6 @@ func main() {
 	}()
 
 	var (
-		logger           = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
 		port             = os.Getenv("PORT")
 		dbname           = os.Getenv("DBNAME")
 		userCollName     = os.Getenv("USERCOLL")
@@ -54,7 +53,10 @@ func main() {
 		router           = chi.NewMux()
 	)
 
-	slog.SetDefault(logger)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
@@ -79,6 +81,8 @@ func main() {
 	router.Get("/comments/{pid}", app.TransferHandlerfunc(commentApp.HandleGetCommentByPostID))
 	router.Delete("/comments/{cid}", app.TransferHandlerfunc(commentApp.HandleDeleteCommentByID))
 
-	slog.Info("the server is running", "listen address", port)
+	logrus.WithFields(logrus.Fields{
+		"listen address": port,
+	}).Info("http server is running")
 	http.ListenAndServe(port, router)
 }
