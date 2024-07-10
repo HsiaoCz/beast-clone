@@ -1,16 +1,19 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
+	"flag"
+
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	svc := NewLoggingService(NewPriceFetcher())
-	price, err := svc.FetchPrice(context.Background(), "GG")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(price)
+	listenAddr := flag.String("listenAddr", ":3000", "listen address the server is running")
+	flag.Parse()
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+	svc := NewLoggingService(NewMetricService(&priceFetcher{}))
+	server := NewJSONAPIServer(*listenAddr, svc)
+	server.Run()
 }

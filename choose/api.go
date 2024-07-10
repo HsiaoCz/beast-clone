@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type CtxType string
@@ -35,7 +37,10 @@ func (s *JSONAPIServer) Run() {
 
 	router.HandleFunc("GET /price", TransferHandlerfunc(s.handleFetchPrice))
 
-	http.ListenAndServe(":3001", router)
+	logrus.WithFields(logrus.Fields{
+		"listen address": s.listenAddr,
+	}).Info("the http server is running")
+	http.ListenAndServe(s.listenAddr, router)
 }
 
 func (s *JSONAPIServer) handleFetchPrice(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
