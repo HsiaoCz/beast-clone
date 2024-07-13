@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users(
     avatar text not null,
     background_image text not null,
     created_at timestamp with time zone not null,
-    updated_at timestamp with time zone not null
+    updated_at timestamp with time zone not null,
+    deleted_at timestamp
 );
 -- +goose StatementBegin;
 -- +goose StatementEnd
