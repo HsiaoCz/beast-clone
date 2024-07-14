@@ -1,10 +1,10 @@
 -- +goose Up
 CREATE TABLE IF NOT EXISTS comments(
     id integer primary key,
-    commentID text unique not null,
-    userID text unique not null,
-    postID text unique not null,
-    parentID text,
+    comment_id text unique not null,
+    user_id text unique not null,
+    post_id text unique not null,
+    parent_id text,
     content text not null,
     created_at timestamp with time zone not null,
     updated_at timestamp with time zone not null,
