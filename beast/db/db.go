@@ -21,7 +21,7 @@ func Get() *gorm.DB {
 	return dbInstance
 }
 
-func init() {
+func Init() error {
 	// Create a default *sql.DB exposed by the superkit/db package
 	// based on the given configuration.
 	config := db.Config{
@@ -33,7 +33,7 @@ func init() {
 	}
 	dbinst, err := db.NewSQL(config)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	// Based on the driver create the corresponding DB instance.
 	// By default, the SuperKit boilerplate comes with a pre-configured
@@ -57,4 +57,5 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	return nil
 }

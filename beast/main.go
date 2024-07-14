@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/HsiaoCz/beast-clone/beast/data"
+	"github.com/HsiaoCz/beast-clone/beast/db"
 	"github.com/HsiaoCz/beast-clone/beast/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -30,13 +32,17 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
+	if err := db.Init(); err != nil {
+		log.Fatal(err)
+	}
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})
 
 	var (
-		userHandler    = &handler.UserHandler{}
+		userStore      = data.NewUserStore(db.Get())
+		userHandler    = handler.NewUserHandler(userStore)
 		postHandler    = &handler.PostHandler{}
 		adminHandler   = &handler.AdminHandler{}
 		commentHandler = &handler.CommentHandler{}
@@ -50,7 +56,7 @@ func main() {
 		app.Post("/admin", adminHandler.HandleCreateAdmin)
 		app.Post("/comment", commentHandler.HandleCreateComment)
 	}
-	
+
 	go func() {
 		if err := app.Listen(os.Getenv("PORT")); err != nil {
 			log.Fatal(err)
