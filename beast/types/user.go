@@ -74,3 +74,10 @@ type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type UserUpdate struct {
+	Username         string `json:"username"`
+	Synopsis         string `json:"synopsis"`
+	Avatar           string `json:"avatar"`
+	Background_Image string `json:"background_image"`
+}
