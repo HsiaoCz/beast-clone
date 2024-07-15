@@ -42,10 +42,13 @@ func main() {
 
 	var (
 		userStore      = data.NewUserStore(db.Get())
+		postStore      = data.NewPostStore(db.Get())
+		commentStore   = data.NewCommentStore(db.Get())
+		adminStore     = data.NewAdminStore(db.Get())
 		userHandler    = handler.NewUserHandler(userStore)
-		postHandler    = &handler.PostHandler{}
-		adminHandler   = &handler.AdminHandler{}
-		commentHandler = &handler.CommentHandler{}
+		postHandler    = handler.NewPostHandler(postStore)
+		adminHandler   = handler.NewAdminHandler(adminStore)
+		commentHandler = handler.NewCommentHandler(commentStore)
 		app            = fiber.New(config)
 	)
 

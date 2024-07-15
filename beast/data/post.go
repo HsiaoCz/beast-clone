@@ -20,5 +20,9 @@ func NewPostStore(db *gorm.DB) *PostStore {
 }
 
 func (p *PostStore) CreatePost(post *types.Post) (*types.Post, error) {
+	tx := p.db.Model(&types.Post{}).Create(post)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
 	return post, nil
 }
