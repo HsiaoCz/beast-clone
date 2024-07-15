@@ -38,3 +38,18 @@ func (u *UserHandler) HandleCreateUser(c *fiber.Ctx) error {
 		"user":    result,
 	})
 }
+
+func (u *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
+	user_id := c.Query("user_id")
+	user, err := u.user.GetUserByID(user_id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "get user success",
+		"user":    user,
+	})
+}
+
+

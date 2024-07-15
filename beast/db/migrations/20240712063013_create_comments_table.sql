@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS comments(
     post_id text unique not null,
     parent_id text,
     content text not null,
-    created_at timestamp with time zone not null,
-    updated_at timestamp with time zone not null,
-    deleted_at timestamp with time zone 
+    created_at datetime not null,
+    updated_at datetime not null,
+    deleted_at datetime
 );
 -- +goose StatementBegin
 -- +goose StatementEnd

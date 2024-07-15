@@ -52,6 +52,8 @@ func main() {
 	{
 		// router
 		app.Post("/user", userHandler.HandleCreateUser)
+		app.Get("/user", userHandler.HandleGetUserByID)
+
 		app.Post("/post", postHandler.HandleCreatePost)
 		app.Post("/admin", adminHandler.HandleCreateAdmin)
 		app.Post("/comment", commentHandler.HandleCreateComment)

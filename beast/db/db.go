@@ -48,7 +48,7 @@ func Init() error {
 	case db.DriverSqlite3:
 		dbInstance, err = gorm.Open(sqlite.New(sqlite.Config{
 			Conn: dbinst,
-		}))
+		}),&gorm.Config{})
 	case db.DriverMysql:
 		// ...
 	default:

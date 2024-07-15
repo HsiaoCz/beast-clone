@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS admins(
     user_password text not null,
     avatar text not null,
     email text unique not null,
-    created_at datetime with time zone not null,
-    updated_at datetime with time zone not null,
-    deleted_at datetime with time zone not null
+    created_at datetime not null,
+    updated_at datetime not null,
+    deleted_at datetime
 );
 -- +goose StatementBegin
 -- +goose StatementEnd
