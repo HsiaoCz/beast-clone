@@ -26,3 +26,13 @@ func (c *CommentStore) CreateComment(comment *types.Comment) (*types.Comment, er
 	}
 	return comment, nil
 }
+
+func (c *CommentStore) DeleteComment(comment_id string) error {
+	tx := c.db.Model(&types.Comment{}).Delete("comment_id = ?", comment_id)
+	return tx.Error
+}
+
+func (c *CommentStore) GetCommentByPostID(post_id string) ([]*types.Comment, error) {
+	return nil, nil
+}
+

@@ -60,3 +60,8 @@ func (u *UserStore) UpdateUser(user_id string, user_update *types.UserUpdate) (*
 	}
 	return &user, nil
 }
+
+func (u *UserStore) DeleteUser(user_id string) error {
+	tx := u.db.Model(&types.User{}).Delete("user_id = ?", user_id)
+	return tx.Error
+}

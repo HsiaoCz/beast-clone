@@ -22,3 +22,7 @@ func NewAdminStore(db *gorm.DB) *AdminStore {
 func (a *AdminStore) CreateAdmin(admin *types.Admin) (*types.Admin, error) {
 	return admin, nil
 }
+
+func (a *AdminStore) DeleteAdmin(user_id string) error {
+	return a.db.Model(&types.Admin{}).Delete("user_id = ?", user_id).Error
+}
