@@ -52,4 +52,10 @@ func (u *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
 	})
 }
 
+func (u *UserHandler) HandleUserLogin(c *fiber.Ctx) error {
+	return nil
+}
 
+func (u *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
+	return nil
+}

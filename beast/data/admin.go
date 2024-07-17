@@ -24,5 +24,5 @@ func (a *AdminStore) CreateAdmin(admin *types.Admin) (*types.Admin, error) {
 }
 
 func (a *AdminStore) DeleteAdmin(user_id string) error {
-	return a.db.Model(&types.Admin{}).Delete("user_id = ?", user_id).Error
+	return a.db.Where("user_id = ?", user_id).Delete(&types.Admin{}).Error
 }
