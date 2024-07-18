@@ -7,6 +7,9 @@ import (
 
 type CommentStorer interface {
 	CreateComment(*types.Comment) (*types.Comment, error)
+	DeleteComment(string) error
+	GetCommentByID(string) (*types.Comment, error)
+	GetCommentByPostID(string) ([]*types.Comment, error)
 }
 
 type CommentStore struct {
@@ -29,6 +32,10 @@ func (c *CommentStore) CreateComment(comment *types.Comment) (*types.Comment, er
 
 func (c *CommentStore) DeleteComment(comment_id string) error {
 	return c.db.Where("comment_id = ?", comment_id).Delete(&types.Comment{}).Error
+}
+
+func (c *CommentStore) GetCommentByID(comment_id string) (*types.Comment, error) {
+	return nil, nil
 }
 
 func (c *CommentStore) GetCommentByPostID(post_id string) ([]*types.Comment, error) {

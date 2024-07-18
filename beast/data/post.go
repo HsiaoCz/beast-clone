@@ -7,6 +7,8 @@ import (
 
 type PostStorer interface {
 	CreatePost(*types.Post) (*types.Post, error)
+	GetPostByID(string) (*types.Post, error)
+	DeletePostByID(string) error
 }
 
 type PostStore struct {
@@ -25,6 +27,15 @@ func (p *PostStore) CreatePost(post *types.Post) (*types.Post, error) {
 		return nil, tx.Error
 	}
 	return post, nil
+}
+
+func (p *PostStore) GetPostByID(post_id string) (*types.Post, error) {
+	var post types.Post
+	tx := p.db.Model(&types.Post{}).Find(&post, "post_id = ?", post_id)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &post, nil
 }
 
 func (p *PostStore) DeletePostByID(post_id string) error {
