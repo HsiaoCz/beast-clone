@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/HsiaoCz/beast-clone/anne/handlers"
+	"github.com/HsiaoCz/beast-clone/anne/service"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
@@ -19,9 +20,10 @@ func main() {
 		FullTimestamp: true,
 	})
 	var (
-		port         = os.Getenv("PORT")
-		priceHandler = &handlers.PriceHandler{}
-		router       = http.NewServeMux()
+		port                = os.Getenv("PORT")
+		defaultPriceFetcher = &service.DefaultPriceFetcher{}
+		priceHandler        = handlers.NewPriceHandler(defaultPriceFetcher)
+		router              = http.NewServeMux()
 	)
 
 	router.HandleFunc("GET /price", handlers.TransferHandlerfunc(priceHandler.HandleGetPrice))
