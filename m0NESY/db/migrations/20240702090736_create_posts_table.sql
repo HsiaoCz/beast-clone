@@ -1,10 +1,13 @@
 -- +goose Up
 CREATE TABLE IF NOT EXISTS posts(
     id integer primary key,
-    userID text unique not null,
+    user_id text unique not null,
+    post_id text unique not null,
     content text not null,
-    created_at timestamp with time zone not null,
-    staticPath text
+    post_path text,
+    created_at datetime not null,
+    updated_at datetime not null,
+    deleted_at datetime
 );
 -- +goose StatementBegin
 -- +goose StatementEnd
