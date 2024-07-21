@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
 var StatusCode = &Status{Code: http.StatusOK}
@@ -19,7 +20,7 @@ type Map map[string]any
 func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := h(w, r); err != nil {
-			defer slog.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
+			defer zap.L().Error("the http server error", zap.String("method", r.Method), zap.String("path", r.URL.Path), zap.String("remote address", r.RemoteAddr), zap.String("error message", err.Error()))
 			if e, ok := err.(ErrorMsg); ok {
 				StatusCode.Code = e.Status
 				WriteJSON(w, e.Status, &e)
@@ -32,7 +33,7 @@ func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 				WriteJSON(w, errMsg.Status, &errMsg)
 			}
 		}
-		slog.Info("new request coming", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+		zap.L().Info("new request coming", zap.String("method", r.Method), zap.Int("code", StatusCode.Code), zap.String("path", r.URL.Path), zap.String("remote address", r.RemoteAddr))
 	}
 }
 
