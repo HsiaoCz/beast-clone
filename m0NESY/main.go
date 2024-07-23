@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/beast-clone/m0NESY/dao"
 	"github.com/HsiaoCz/beast-clone/m0NESY/db"
 	"github.com/HsiaoCz/beast-clone/m0NESY/handlers"
 	"github.com/HsiaoCz/beast-clone/m0NESY/logger"
@@ -28,13 +29,14 @@ func main() {
 
 	var (
 		port         = os.Getenv("PORT")
-		userHandlers = &handlers.UserHandlers{}
+		userDataMod  = dao.NewUserDataMod(db.Get())
+		userHandlers = handlers.NewUserHandlers(userDataMod)
 		router       = http.NewServeMux()
 	)
 
 	{
 		// router
-		router.HandleFunc("GET /user/hello", handlers.TransferHandlerfunc(userHandlers.HandleCreateUser))
+		router.HandleFunc("POST /user", handlers.TransferHandlerfunc(userHandlers.HandleCreateUser))
 	}
 
 	zap.L().Info("http server is running", zap.String("listen address", port))
