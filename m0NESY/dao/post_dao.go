@@ -8,6 +8,7 @@ import (
 type PostDataModer interface {
 	CreatePost(*types.Post) (*types.Post, error)
 	GetPostByID(string) (*types.Post, error)
+	GetPostByUserID(string) ([]*types.Post, error)
 }
 
 type PostDataMod struct {
@@ -35,4 +36,13 @@ func (p *PostDataMod) GetPostByID(post_id string) (*types.Post, error) {
 		return nil, tx.Error
 	}
 	return &post, nil
+}
+
+func (p *PostDataMod) GetPostByUserID(user_id string) ([]*types.Post, error) {
+	posts := []*types.Post{}
+	tx := p.db.Model(&types.Post{}).Where("user_id = ?", user_id).Scan(posts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return posts, nil
 }

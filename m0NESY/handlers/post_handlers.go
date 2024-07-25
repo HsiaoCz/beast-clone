@@ -45,3 +45,14 @@ func (p *PostHandler) HandleGetPostByID(w http.ResponseWriter, r *http.Request) 
 		"post":   post,
 	})
 }
+
+func (p *PostHandler) HandleGetPostsByUserID(w http.ResponseWriter, r *http.Request) error {
+	posts, err := p.post.GetPostByUserID(r.URL.Query().Get("uid"))
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJSON(w, http.StatusOK, Map{
+		"status": http.StatusOK,
+		"posts":  posts,
+	})
+}

@@ -60,5 +60,17 @@ func (u *UserHandlers) HandleDeleteUserByID(w http.ResponseWriter, r *http.Reque
 }
 
 func (u *UserHandlers) HandleUpdateUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	var user_update types.UserUpdate
+	if err := json.NewDecoder(r.Body).Decode(&user_update); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	user, err := u.ud.UpdateUser(r.PathValue("uid"), &user_update)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJSON(w, http.StatusOK, Map{
+		"status":  http.StatusOK,
+		"message": "update user success",
+		"user":    user,
+	})
 }
