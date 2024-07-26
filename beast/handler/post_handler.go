@@ -57,3 +57,14 @@ func (p *PostHandler) HandleDeletePostByID(c *fiber.Ctx) error {
 		"message": "delete post success",
 	})
 }
+
+func (p *PostHandler) HandleGetPostsByUserID(c *fiber.Ctx) error {
+	posts, err := p.post.GetPostsByUserID(c.Query("uid"))
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": http.StatusOK,
+		"posts":  posts,
+	})
+}

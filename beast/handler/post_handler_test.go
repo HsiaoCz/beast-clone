@@ -22,16 +22,13 @@ func TestCreatePost(t *testing.T) {
 		t.Fatal(err)
 	}
 	app := fiber.New()
-	userHandler := NewUserHandler(data.NewUserStore(db.Get()))
-	app.Post("/user", userHandler.HandleCreateUser)
+	postHandler := NewPostHandler(data.NewPostStore(db.Get()))
+	app.Post("/post", postHandler.HandleCreatePost)
 
-	params := types.CreateUserParams{
-		Username:         "shawcz",
-		Email:            "shawcz@gmail.com",
-		Password:         "zsaa123242",
-		Synopsis:         "something as great",
-		Avatar:           "./picture/1233.jpg",
-		Background_Image: "./bgi/1244.jpg",
+	params := types.CreatePostParams{
+		UserID:   "",
+		Content:  "something",
+		PostPath: "./posts/12232.txt",
 	}
 	b, _ := json.Marshal(params)
 	req := httptest.NewRequest("POST", "/user", bytes.NewBuffer(b))

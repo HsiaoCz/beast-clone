@@ -53,9 +53,22 @@ func (u *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
 }
 
 func (u *UserHandler) HandleUserLogin(c *fiber.Ctx) error {
-	return nil
+	var user_login_parmas types.UserLogin
+	if err := c.BodyParser(&user_login_parmas); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	if err := u.user.GetUserByEmailAndPassword(user_login_parmas.Email, user_login_parmas.Password); err != nil {
+		return ErrorMessage(http.StatusBadRequest, "please check your email or password")
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "login success",
+	})
 }
 
 func (u *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
-	return nil
+	if err := u.user.DeleteUserByID(c.Query("uid")); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	return c.Status(http.StatusOK).SendString("delete user success")
 }

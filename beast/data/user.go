@@ -10,6 +10,7 @@ type UserStorer interface {
 	GetUserByID(string) (*types.User, error)
 	GetUserByEmailAndPassword(string, string) error
 	UpdateUser(string, *types.UserUpdate) (*types.User, error)
+	DeleteUserByID(string)error
 }
 
 type UserStore struct {
@@ -61,6 +62,6 @@ func (u *UserStore) UpdateUser(user_id string, user_update *types.UserUpdate) (*
 	return &user, nil
 }
 
-func (u *UserStore) DeleteUser(user_id string) error {
+func (u *UserStore) DeleteUserByID(user_id string) error {
 	return u.db.Where("user_id = ?", user_id).Delete(&types.User{}).Error
 }

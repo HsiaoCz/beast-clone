@@ -44,5 +44,7 @@ func TestCreateUser(t *testing.T) {
 
 	userParam := types.CreateUserParams{}
 	json.NewDecoder(resp.Body).Decode(&userParam)
-	
+	if userParam.Username != params.Username {
+		t.Errorf("want %s but got %s", params.Username, userParam.Username)
+	}
 }
