@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/beast-clone/simon/app"
+	"github.com/HsiaoCz/beast-clone/simon/store"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -32,8 +34,17 @@ func main() {
 	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 
 	var (
-		router = http.NewServeMux()
+		userColl  = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
+		userStore = store.UserStoreInit(client, userColl)
+		userApp   = app.UserAppInit(userStore)
+		router    = http.NewServeMux()
 	)
+
+	{
+		// router
+		router.HandleFunc("POST /user", app.TransferHandlerfunc(userApp.HandleCreateUser))
+	}
+
 	logrus.WithFields(logrus.Fields{
 		"listen address": os.Getenv("PORT"),
 	}).Info("the http server is running")
