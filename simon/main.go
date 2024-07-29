@@ -36,7 +36,8 @@ func main() {
 	var (
 		userColl  = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
 		userStore = store.UserStoreInit(client, userColl)
-		userApp   = app.UserAppInit(userStore)
+		store     = &store.Store{Us: userStore}
+		userApp   = app.UserAppInit(store)
 		router    = http.NewServeMux()
 	)
 

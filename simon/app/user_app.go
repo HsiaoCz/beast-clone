@@ -9,12 +9,12 @@ import (
 )
 
 type UserApp struct {
-	user store.UserStorer
+	store *store.Store
 }
 
-func UserAppInit(user store.UserStorer) *UserApp {
+func UserAppInit(store *store.Store) *UserApp {
 	return &UserApp{
-		user: user,
+		store: store,
 	}
 }
 
@@ -28,7 +28,7 @@ func (u *UserApp) HandleCreateUser(w http.ResponseWriter, r *http.Request) error
 		return WriteJson(w, http.StatusBadRequest, msg)
 	}
 	user := st.NewUserFromReq(user_create_params)
-	result, err := u.user.CreateUser(r.Context(), user)
+	result, err := u.store.Us.CreateUser(r.Context(), user)
 	if err != nil {
 		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
