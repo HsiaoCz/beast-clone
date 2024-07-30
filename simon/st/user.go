@@ -11,10 +11,13 @@ import (
 )
 
 const (
-	bcryptCost     = 12
-	minUsername    = 4
-	minPasswordLen = 7
+	bcryptCost              = 12
+	minUsername             = 4
+	minPasswordLen          = 7
+	CtxUserInfoKey UserType = "userInfo"
 )
+
+type UserType string
 
 type User struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
