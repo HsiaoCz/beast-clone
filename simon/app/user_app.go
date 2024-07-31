@@ -7,6 +7,7 @@ import (
 	"github.com/HsiaoCz/beast-clone/simon/app/helper"
 	"github.com/HsiaoCz/beast-clone/simon/st"
 	"github.com/HsiaoCz/beast-clone/simon/store"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserApp struct {
@@ -61,4 +62,17 @@ func (u *UserApp) HandleUserLogin(w http.ResponseWriter, r *http.Request) error 
 		"token":  token,
 		"user":   user,
 	})
+}
+
+func (u *UserApp) HandleGetUserByID(w http.ResponseWriter, r *http.Request) error {
+	id := r.URL.Query().Get("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, "query param invalid")
+	}
+	user, err := u.store.Us.GetUserByID(r.Context(), uid)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, user)
 }

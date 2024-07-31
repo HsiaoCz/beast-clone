@@ -13,6 +13,7 @@ import (
 type UserStorer interface {
 	CreateUser(context.Context, *st.User) (*st.User, error)
 	GetUserByEmail(context.Context, string) (*st.User, error)
+	GetUserByID(context.Context, primitive.ObjectID) (*st.User, error)
 }
 
 type UserStore struct {
@@ -50,4 +51,15 @@ func (u *UserStore) GetUserByEmail(ctx context.Context, email string) (*st.User,
 		return nil, errors.New("database doesnt hava this record")
 	}
 	return &check, nil
+}
+
+func (u *UserStore) GetUserByID(ctx context.Context, uid primitive.ObjectID) (*st.User, error) {
+	var user st.User
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+	if err := u.coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
