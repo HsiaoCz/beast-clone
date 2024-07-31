@@ -46,6 +46,8 @@ func main() {
 		router.HandleFunc("POST /user/signup", app.TransferHandlerfunc(userApp.HandleCreateUser))
 		router.HandleFunc("POST /user/login", app.TransferHandlerfunc(userApp.HandleUserLogin))
 		router.HandleFunc("GET /user", app.TransferHandlerfunc(userApp.HandleGetUserByID))
+		router.HandleFunc("DELETE /user", app.TransferHandlerfunc(userApp.HandleDeleteUser))
+		router.HandleFunc("PUT /user", app.TransferHandlerfunc(userApp.HandleUpdateUser))
 	}
 
 	logrus.WithFields(logrus.Fields{

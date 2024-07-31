@@ -107,12 +107,12 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 		return ErrorMessage(http.StatusBadRequest, "please check the uid param")
 	}
 	up := types.UpdateUserParams{}
+	if err := c.BodyParser(&up); err != nil {
+		return ErrorMessage(http.StatusBadRequest, "please check the update params")
+	}
 	msg := up.ValidateUpdateUserParams()
 	if len(msg) != 0 {
 		return c.Status(http.StatusBadRequest).JSON(msg)
-	}
-	if err := c.BodyParser(&up); err != nil {
-		return ErrorMessage(http.StatusBadRequest, "please check the update params")
 	}
 	user, err := u.store.User.UpdateUser(c.Context(), uid, &up)
 	if err != nil {

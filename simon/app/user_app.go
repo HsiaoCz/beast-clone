@@ -76,3 +76,40 @@ func (u *UserApp) HandleGetUserByID(w http.ResponseWriter, r *http.Request) erro
 	}
 	return WriteJson(w, http.StatusOK, user)
 }
+
+func (u *UserApp) HandleDeleteUser(w http.ResponseWriter, r *http.Request) error {
+	userInfo, ok := r.Context().Value(st.CtxUserInfoKey).(*st.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "please login")
+	}
+	if err := u.store.Us.DeleteUserByID(r.Context(), userInfo.UserID); err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, map[string]any{
+		"status":  http.StatusOK,
+		"message": "delete user success",
+	})
+}
+
+func (u *UserApp) HandleUpdateUser(w http.ResponseWriter, r *http.Request) error {
+	userInfo, ok := r.Context().Value(st.CtxUserInfoKey).(*st.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "please login")
+	}
+	var up st.UpdateUserParams
+	if err := json.NewDecoder(r.Body).Decode(&up); err != nil {
+		return ErrorMessage(http.StatusBadRequest, "please check the update params")
+	}
+	msg := up.ValidateUpdateUserParams()
+	if len(msg) != 0 {
+		return WriteJson(w, http.StatusBadRequest, msg)
+	}
+	user, err := u.store.Us.UpdateUser(r.Context(), userInfo.UserID, &up)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, map[string]any{
+		"status": http.StatusOK,
+		"user":   user,
+	})
+}

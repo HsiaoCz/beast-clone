@@ -8,12 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserStorer interface {
 	CreateUser(context.Context, *st.User) (*st.User, error)
 	GetUserByEmail(context.Context, string) (*st.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*st.User, error)
+	DeleteUserByID(context.Context, primitive.ObjectID) error
+	UpdateUser(context.Context, primitive.ObjectID, *st.UpdateUserParams) (*st.User, error)
 }
 
 type UserStore struct {
@@ -58,6 +61,38 @@ func (u *UserStore) GetUserByID(ctx context.Context, uid primitive.ObjectID) (*s
 	filter := bson.D{
 		{Key: "_id", Value: uid},
 	}
+	if err := u.coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (u *UserStore) DeleteUserByID(ctx context.Context, uid primitive.ObjectID) error {
+	result, err := u.coll.DeleteOne(ctx, bson.D{{Key: "_id", Value: uid}})
+	if err != nil {
+		return errors.New("delete this record failed")
+	}
+	if result.DeletedCount == 0 {
+		return errors.New("database doesn't have this record")
+	}
+	return nil
+}
+
+func (u *UserStore) UpdateUser(ctx context.Context, uid primitive.ObjectID, params *st.UpdateUserParams) (*st.User, error) {
+	filter := bson.D{{Key: "_id", Value: uid}}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "username", Value: params.Username},
+		}},
+	}
+
+	updateOptions := options.Update().SetUpsert(true)
+	_, err := u.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	var user st.User
 	if err := u.coll.FindOne(ctx, filter).Decode(&user); err != nil {
 		return nil, err
 	}
