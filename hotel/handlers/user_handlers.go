@@ -125,6 +125,11 @@ func (u *UserHandlers) HandleUpdateUser(c *fiber.Ctx) error {
 }
 
 func (u *UserHandlers) HandleUserVerifyPassword(c *fiber.Ctx) error {
+	userInfo, ok := c.Context().UserValue(middlewares.CtxUserInfoKey).(types.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "please login")
+	}
+	_ = userInfo
 	return nil
 }
 

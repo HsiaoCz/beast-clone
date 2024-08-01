@@ -113,3 +113,11 @@ func (u *UserApp) HandleUpdateUser(w http.ResponseWriter, r *http.Request) error
 		"user":   user,
 	})
 }
+
+func (u *UserApp)HandleUserVerifyPassword(w http.ResponseWriter, r *http.Request)error{
+	return nil
+}
+
+func (u *UserApp)HandleUserBookingRoom(w http.ResponseWriter, r *http.Request)error{
+	return nil
+}
