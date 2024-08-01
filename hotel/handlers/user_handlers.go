@@ -129,8 +129,20 @@ func (u *UserHandlers) HandleUserVerifyPassword(c *fiber.Ctx) error {
 	if !ok {
 		return ErrorMessage(http.StatusUnauthorized, "please login")
 	}
-	_ = userInfo
-	return nil
+	var user_verify_passwd_params types.VerifyUserPasswordParmas
+	if err := c.BodyParser(&user_verify_passwd_params); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	if !user_verify_passwd_params.Validate() {
+		return ErrorMessage(http.StatusBadRequest, "verify your passwrod")
+	}
+	if err := u.store.User.VerifyUserPassword(c.Context(), userInfo.UserID, user_verify_passwd_params.EncryptedUserPassword()); err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "chenge password success",
+	})
 }
 
 func (u *UserHandlers) HandleUserBookingRoom(c *fiber.Ctx) error { return nil }

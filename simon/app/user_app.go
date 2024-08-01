@@ -114,10 +114,27 @@ func (u *UserApp) HandleUpdateUser(w http.ResponseWriter, r *http.Request) error
 	})
 }
 
-func (u *UserApp)HandleUserVerifyPassword(w http.ResponseWriter, r *http.Request)error{
-	return nil
+func (u *UserApp) HandleUserVerifyPassword(w http.ResponseWriter, r *http.Request) error {
+	userInfo, ok := r.Context().Value(st.CtxUserInfoKey).(*st.User)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "please login")
+	}
+	var user_verify_passwd_params st.VerifyUserPasswordParmas
+	if err := json.NewDecoder(r.Body).Decode(&user_verify_passwd_params); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	if !user_verify_passwd_params.Validate() {
+		return ErrorMessage(http.StatusBadRequest, "verify your password")
+	}
+	if err := u.store.Us.VerifyUserPassword(r.Context(), userInfo.ID, user_verify_passwd_params.EncryptedUserPassword()); err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return WriteJson(w, http.StatusOK, map[string]any{
+		"status":  http.StatusOK,
+		"message": "chenge password success",
+	})
 }
 
-func (u *UserApp)HandleUserBookingRoom(w http.ResponseWriter, r *http.Request)error{
+func (u *UserApp) HandleUserBookingRoom(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }

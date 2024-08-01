@@ -111,7 +111,7 @@ func (v VerifyUserPasswordParmas) Validate() bool {
 	return v.Password == v.VerifyPassword
 }
 
-func (v VerifyUserPasswordParmas) EncryptedUserPassword(password string) string {
+func (v VerifyUserPasswordParmas) EncryptedUserPassword() string {
 	return encryptPassword(v.Password)
 }
 
