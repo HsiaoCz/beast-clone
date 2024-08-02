@@ -43,6 +43,7 @@ func main() {
 
 	{
 		// router
+		// well some handlers need middleware
 		router.HandleFunc("POST /user/signup", app.TransferHandlerfunc(userApp.HandleCreateUser))
 		router.HandleFunc("POST /user/login", app.TransferHandlerfunc(userApp.HandleUserLogin))
 		router.HandleFunc("GET /user", app.TransferHandlerfunc(userApp.HandleGetUserByID))
