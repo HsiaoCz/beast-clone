@@ -28,3 +28,7 @@ type CreateRoomParams struct {
 	HotelID   string  `json:"hotelOD"`
 	Available bool    `json:"available"`
 }
+
+type UpdateHotelParams struct{}
+
+type UpdateRoomParmas struct{}
