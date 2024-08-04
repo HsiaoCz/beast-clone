@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 
+	"github.com/HsiaoCz/beast-clone/simon/st"
 	"github.com/HsiaoCz/beast-clone/simon/store"
 )
 
@@ -17,5 +18,11 @@ func BookingAppInit(store *store.Store) *BookingApp {
 }
 
 func (b *BookingApp) HandleGetBookings(w http.ResponseWriter, r *http.Request) error {
+	// get booking need login
+	userInfo, ok := r.Context().Value(st.CtxUserInfoKey).(*st.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "user unlogin")
+	}
+	_ = userInfo
 	return nil
 }

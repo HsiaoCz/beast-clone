@@ -17,6 +17,7 @@ func RoomAppInit(store *store.Store) *RoomApp {
 }
 
 func (ra *RoomApp) HandleGetRooms(w http.ResponseWriter, r *http.Request) error {
+	// get room don't need login
 	return nil
 }
 

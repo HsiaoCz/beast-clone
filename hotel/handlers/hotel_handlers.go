@@ -16,5 +16,6 @@ func NewHotelHandlers(store *storage.Store) *HotelHandlers {
 }
 
 func (h *HotelHandlers)HandleGetHotels(c *fiber.Ctx)error{
+	// get hotel and room don't need login
 	return nil
 }

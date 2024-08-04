@@ -1,7 +1,11 @@
 package handlers
 
 import (
+	"net/http"
+
+	"github.com/HsiaoCz/beast-clone/hotel/handlers/middlewares"
 	"github.com/HsiaoCz/beast-clone/hotel/storage"
+	"github.com/HsiaoCz/beast-clone/hotel/types"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,6 +19,11 @@ func NewBookingHandlers(store *storage.Store) *BookingHandlers {
 	}
 }
 
-func (b *BookingHandlers)HandleGetBookings(c *fiber.Ctx)error{
+func (b *BookingHandlers) HandleGetBookings(c *fiber.Ctx) error {
+	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(*types.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "user unlogin")
+	}
+	_ = userInfo
 	return nil
 }
