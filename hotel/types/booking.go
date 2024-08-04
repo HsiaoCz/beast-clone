@@ -18,12 +18,17 @@ type Booking struct {
 }
 
 type BookRoomParams struct {
+	RoomID     string `json:"roomID"`
 	FromDate   string `json:"fromDate"`
 	TillDate   string `json:"tillDate"`
 	NumPersons int    `json:"numPersons"`
 }
 
 func (p BookRoomParams) Validate() error {
+	_, err := primitive.ObjectIDFromHex(p.RoomID)
+	if err != nil {
+		return errors.New("invalid room identity")
+	}
 	formDate, err := ParseStringToTime(p.FromDate)
 	if err != nil {
 		return errors.New("you should check out the from-date")
@@ -40,6 +45,20 @@ func (p BookRoomParams) Validate() error {
 		return errors.New("cannot book the room,please check out the date")
 	}
 	return nil
+}
+
+func NewBookingFromParams(params BookRoomParams, userID primitive.ObjectID) *Booking {
+	formDate, _ := ParseStringToTime(params.FromDate)
+	tillDate, _ := ParseStringToTime(params.TillDate)
+	roomID, _ := primitive.ObjectIDFromHex(params.RoomID)
+	return &Booking{
+		UserID:     userID,
+		RoomID:     roomID,
+		TillDate:   tillDate,
+		FromDate:   formDate,
+		NumPersons: params.NumPersons,
+		Canceled:   false,
+	}
 }
 
 func ParseStringToTime(timestr string) (time.Time, error) {

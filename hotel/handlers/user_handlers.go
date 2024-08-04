@@ -145,4 +145,24 @@ func (u *UserHandlers) HandleUserVerifyPassword(c *fiber.Ctx) error {
 	})
 }
 
-func (u *UserHandlers) HandleUserBookingRoom(c *fiber.Ctx) error { return nil }
+func (u *UserHandlers) HandleUserBookingRoom(c *fiber.Ctx) error {
+	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(*types.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusUnauthorized, "user nologin")
+	}
+	var booking_params types.BookRoomParams
+	if err := c.BodyParser(&booking_params); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	if err := booking_params.Validate(); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	booking, err := u.store.Book.CreateBooking(c.Context(), types.NewBookingFromParams(booking_params, userInfo.UserID))
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"booking": booking,
+	})
+}

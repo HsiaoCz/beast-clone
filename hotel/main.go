@@ -43,12 +43,14 @@ func main() {
 		}
 	}()
 	var (
-		userColl       = client.Database(os.Getenv("BDNAME")).Collection(os.Getenv("USERCOLL"))
-		mongoUserStore = storage.NewMongoUserStore(client, userColl)
-		store          = &storage.Store{User: mongoUserStore}
-		userHandlers   = handlers.NewUserHandlers(store)
-		app            = fiber.New(config)
-		v1             = app.Group("/api/v1")
+		userColl          = client.Database(os.Getenv("BDNAME")).Collection(os.Getenv("USERCOLL"))
+		bookingColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("BOOKINGCOLL"))
+		mongoUserStore    = storage.NewMongoUserStore(client, userColl)
+		mongoBookingStore = storage.NewMongoBookingStore(client, bookingColl)
+		store             = &storage.Store{User: mongoUserStore, Book: mongoBookingStore}
+		userHandlers      = handlers.NewUserHandlers(store)
+		app               = fiber.New(config)
+		v1                = app.Group("/api/v1")
 	)
 	{
 		// router
