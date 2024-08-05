@@ -45,9 +45,11 @@ func main() {
 	var (
 		userColl          = client.Database(os.Getenv("BDNAME")).Collection(os.Getenv("USERCOLL"))
 		bookingColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("BOOKINGCOLL"))
+		hotelColl         = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("HOTELCOLL"))
 		mongoUserStore    = storage.NewMongoUserStore(client, userColl)
 		mongoBookingStore = storage.NewMongoBookingStore(client, bookingColl)
-		store             = &storage.Store{User: mongoUserStore, Book: mongoBookingStore}
+		mongoHotelStore   = storage.NewMongoHotelStore(client, hotelColl)
+		store             = &storage.Store{User: mongoUserStore, Book: mongoBookingStore, Hotel: mongoHotelStore}
 		userHandlers      = handlers.NewUserHandlers(store)
 		app               = fiber.New(config)
 		v1                = app.Group("/api/v1")

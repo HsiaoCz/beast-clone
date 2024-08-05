@@ -38,3 +38,4 @@ type CreateRoomParams struct {
 	HotelID   string  `json:"hotelOD"`
 	Available bool    `json:"available"`
 }
+
