@@ -1,10 +1,14 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
+	"math"
+	"math/rand"
 	"net/http"
 	"time"
 
+	"github.com/HsiaoCz/beast-clone/simon/st"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,10 +22,14 @@ type Handlerfunc func(w http.ResponseWriter, r *http.Request) error
 
 func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		requestID := rand.New(rand.NewSource(time.Now().UnixNano())).Int63n(math.MaxInt64)
+		ctx := context.WithValue(r.Context(), st.CtxRequestIDKey, requestID)
+		r = r.WithContext(ctx)
 		start := time.Now()
 		if err := h(w, r); err != nil {
 			defer func() {
 				logrus.WithFields(logrus.Fields{
+					"requestID":      requestID,
 					"method":         r.Method,
 					"path":           r.URL.Path,
 					"remote address": r.RemoteAddr,
@@ -41,6 +49,7 @@ func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 			}
 		}
 		logrus.WithFields(logrus.Fields{
+			"requestID":      requestID,
 			"method":         r.Method,
 			"code":           StatusCode.Code,
 			"path":           r.URL.Path,
