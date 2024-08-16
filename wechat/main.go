@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/beast-clone/wechat/db"
 	"github.com/HsiaoCz/beast-clone/wechat/handlers"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -13,6 +14,9 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+	if err := db.InitDB(); err != nil {
 		log.Fatal(err)
 	}
 	logrus.SetLevel(logrus.DebugLevel)
