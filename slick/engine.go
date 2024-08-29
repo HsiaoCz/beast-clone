@@ -5,13 +5,16 @@ import (
 )
 
 type Engine struct {
+	*RouterGroup
 	router *router
+	groups []*RouterGroup // store all groups
 }
 
 func New() *Engine {
-	return &Engine{
-		router: newRouter(),
-	}
+	engine := &Engine{router: newRouter()}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup}
+	return engine
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
