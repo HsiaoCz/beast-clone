@@ -20,10 +20,8 @@ func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
 }
 
 // SayHello implements helloworld.GreeterServer.
-func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
-	g, err := s.uc.CreateGreeter(ctx, &biz.Greeter{Hello: in.Name})
-	if err != nil {
-		return nil, err
-	}
-	return &v1.HelloReply{Message: "Hello " + g.Hello}, nil
+func (s *GreeterService) CreateUser(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
+}
+
+func (s *GreeterService) GetUserByID(ctx context.Context, in *v1.CreateUserRequest) (*v1.CreateUserResponse, error) {
 }
