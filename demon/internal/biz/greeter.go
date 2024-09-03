@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 )
 
 var (
@@ -16,6 +17,14 @@ var (
 
 // Greeter is a Greeter model.
 type User struct {
+	gorm.Model
+	UserID          string `gorm:"column:user_id"`
+	Username        string `gorm:"column:username"`
+	Password        string `gorm:"column:password"`
+	Email           string `gorm:"column:email"`
+	Synopsis        string `gorm:"column:synopsis"`
+	Avatar          string `gorm:"column:avatar"`
+	BackgroundImage string `gorm:"column:background_image"`
 }
 
 // GreeterRepo is a Greater repo.
@@ -40,3 +49,4 @@ func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *User) (*User, er
 	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g)
 	return uc.repo.CreateUser(ctx, g)
 }
+
