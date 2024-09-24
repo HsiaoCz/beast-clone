@@ -1,6 +1,6 @@
 package server
 
-
-type HttpServer struct{
-	
+type HttpServer struct {
 }
+
+func (h *HttpServer) Register() {}
