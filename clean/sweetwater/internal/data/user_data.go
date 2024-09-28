@@ -13,6 +13,8 @@ import (
 type UserDataInter interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
 	DeleteUser(context.Context, primitive.ObjectID) error
+	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
+	UpdateUser(context.Context, *types.UserUpdateParams) (*types.User, error)
 }
 
 type UserData struct {
@@ -61,4 +63,19 @@ func (u *UserData) DeleteUser(ctx context.Context, id primitive.ObjectID) error 
 		return errors.New("there is no this record")
 	}
 	return nil
+}
+
+func (u *UserData) GetUserByID(ctx context.Context, id primitive.ObjectID) (*types.User, error) {
+	var user types.User
+	filter := bson.D{
+		{Key: "_id", Value: id},
+	}
+	if err := u.coll.FindOne(ctx, filter).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (u *UserData) UpdateUser(ctx context.Context, updateParmas *types.UserUpdateParams) (*types.User, error) {
+	return nil, nil
 }
