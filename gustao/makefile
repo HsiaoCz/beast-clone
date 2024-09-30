@@ -5,10 +5,10 @@ ifneq (,$(wildcard ./.env))
 endif
 
 run: build
-	@./bin/beast
+	@./bin/gus
 
 build:
-	@go build -o bin/beast main.go
+	@go build -o bin/gus main.go
 
 test:
 	@go test -v ./...

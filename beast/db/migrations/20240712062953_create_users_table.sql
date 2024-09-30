@@ -5,11 +5,14 @@ CREATE TABLE IF NOT EXISTS users(
     username text not null,
     email text unique not null,
     user_password text not null,
+    gender text not null,
+    Age integer not null,
+    birthday text not null,
     synopsis text,
     avatar text not null,
     background_image text not null,
-    created_at datetime  not null,
-    updated_at datetime  not null,
+    created_at datetime not null,
+    updated_at datetime not null,
     deleted_at datetime
 );
 -- +goose StatementBegin
