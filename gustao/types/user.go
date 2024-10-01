@@ -18,4 +18,7 @@ type User struct {
 
 type CreateUserReq struct {
 	Username string `json:"username"`
+	Gender   string `json:"gender"`
+	Email    string `json:"email"`
+	Birthday string `json:"birthday"`
 }
