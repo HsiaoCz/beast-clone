@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/IBM/sarama v1.43.2
 	github.com/anthdm/superkit v0.0.0-20240701091803-e7f8e0aad3e9
+	github.com/aquasecurity/table v1.8.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-kratos/kratos/v2 v2.7.3
@@ -96,6 +97,7 @@ require (
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/term v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240624140628-dc46fd24d27d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect

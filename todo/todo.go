@@ -3,7 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
+
+	"github.com/aquasecurity/table"
 )
 
 type Todo struct {
@@ -28,7 +32,7 @@ func (t *Todos) add(title string) {
 
 func (t *Todos) validateIndex(index int) error {
 	if index < 0 || index >= len(*t) {
-		err := errors.New("Invalid index")
+		err := errors.New("invalid index")
 		fmt.Println(err)
 		return err
 	}
@@ -42,4 +46,50 @@ func (t *Todos) delete(index int) error {
 	}
 	*t = append(todos[:index], todos[index+1:]...)
 	return nil
+}
+
+func (t *Todos) toggle(index int) error {
+	todos := *t
+	if err := todos.validateIndex(index); err != nil {
+		return err
+	}
+	isCompleted := todos[index].Completed
+	if !isCompleted {
+		completionTime := time.Now()
+		todos[index].CompletedAt = &completionTime
+	}
+	todos[index].Completed = !isCompleted
+
+	return nil
+}
+func (t *Todos) edit(index int, title string) error {
+	todos := *t
+	if err := todos.validateIndex(index); err != nil {
+		return err
+	}
+
+	todos[index].Title = title
+
+	return nil
+}
+
+func (t *Todos) print() {
+	table := table.New(os.Stdout)
+	table.SetRowLines(false)
+	table.SetHeaders("#", "Title", "Completed", "Created At", "Completed At")
+	for index, todo := range *t {
+		completed := "❌"
+		completedAt := ""
+
+		if todo.Completed {
+			completed = "✅"
+			if todo.CompletedAt != nil {
+				completedAt = todo.CompletedAt.Format(time.RFC1123)
+			}
+		}
+
+		table.AddRow(strconv.Itoa(index), todo.Title, completed, todo.CreateAt.Format(time.RFC1123), completedAt)
+
+		table.Render()
+	}
 }
