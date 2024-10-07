@@ -24,3 +24,7 @@ func (u *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) 
 	}).Info("the request fucking ID")
 	return WriteJson(w, http.StatusOK, &user)
 }
+
+func (u *UserHandlers) HandleGetUserByID(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}

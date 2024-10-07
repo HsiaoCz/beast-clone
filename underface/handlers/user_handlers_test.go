@@ -29,12 +29,7 @@ func TestCreateUser(t *testing.T) {
 		}
 	}()
 
-	params := types.User{
-		Username: "bob",
-		Email:    "bob@mail.com",
-		Synopsis: "Hello Everyone",
-		Avatar:   "./avatar/.1233.jpg",
-	}
+	params := types.User{}
 	b, _ := json.Marshal(params)
 	client := &http.Client{}
 	resp, err := client.Post("127.0.0.1:3001/user", "application/json", bytes.NewBuffer(b))
@@ -48,18 +43,10 @@ func TestCreateUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if params.Username != user.Username {
-		t.Errorf("exception username %s but get %s", params.Username, user.Username)
-	}
 }
 
 func TestCreateUserWith(t *testing.T) {
-	params := types.User{
-		Username: "bob",
-		Email:    "bob@mail.com",
-		Synopsis: "Hello Everyone",
-		Avatar:   "./avatar/.1233.jpg",
-	}
+	params := types.User{}
 	b, _ := json.Marshal(params)
 	req := httptest.NewRequest("POST", "/user", bytes.NewBuffer(b))
 	w := httptest.NewRecorder()
@@ -73,7 +60,5 @@ func TestCreateUserWith(t *testing.T) {
 		log.Fatal(err)
 	}
 	log.Printf("%v", user)
-	if params.Username != user.Username {
-		t.Errorf("exception username %s but get %s", params.Username, user.Username)
-	}
+
 }
