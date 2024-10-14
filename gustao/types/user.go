@@ -21,4 +21,5 @@ type CreateUserReq struct {
 	Gender   string `json:"gender"`
 	Email    string `json:"email"`
 	Birthday string `json:"birthday"`
+	
 }

@@ -49,4 +49,3 @@ func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *User) (*User, er
 	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g)
 	return uc.repo.CreateUser(ctx, g)
 }
-
