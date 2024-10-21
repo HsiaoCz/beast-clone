@@ -22,7 +22,7 @@ const (
 // }
 
 // JWT Middleware
-func JwtMiddleware(next http.Handler) http.Handler {
+func JwtMiddleware(next http.Handler) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the Authorization header
 		authHeader := r.Header.Get("Authorization")
