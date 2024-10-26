@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package  protopkg;
+
+option go_package="./;protopkg";
+
+service PriceFetcher{
+    rpc FetchPrice(FetchPriceRequest) returns (FetchPriceResponse){}
+}
+
+message FetchPriceRequest{
+    string ticker=1;
+}
+
+message FetchPriceResponse{
+    string ticker=1;
+    double price=2;
+}
