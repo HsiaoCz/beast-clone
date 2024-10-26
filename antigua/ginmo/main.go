@@ -8,6 +8,8 @@ import (
 
 func main() {
 	// gin静态文件处理
+	// 初始化 redis
+	InitRdb()
 	r := gin.Default()
 
 	// r.Static("/static", "./static/public") // html js css
