@@ -16,11 +16,11 @@ func main() {
 	// r.StaticFS("/file", http.Dir("./picture"))
 
 	//
-	r.GET("/some", CustomMiddleware(), func(ctx *gin.Context) {
+	r.GET("/some", MemeryMiddleware(), func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "hello",
 		})
 	})
-	r.POST("/user", UserRegisterHandler)
+	r.POST("/user", UserMemRegisterHandler)
 	r.Run(":3001")
 }
