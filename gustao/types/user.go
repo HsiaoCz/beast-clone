@@ -1,6 +1,9 @@
 package types
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -21,5 +24,20 @@ type CreateUserReq struct {
 	Gender   string `json:"gender"`
 	Email    string `json:"email"`
 	Birthday string `json:"birthday"`
-	
+	Password string `json:"password"`
+	Age      int    `json:"age"`
+}
+
+func CreateUserFromParams(parmas CreateUserReq) *User {
+	return &User{
+		User_ID:          uuid.NewString(),
+		Username:         parmas.Username,
+		Email:            parmas.Email,
+		Birthday:         parmas.Birthday,
+		Age:              parmas.Age,
+		Gender:           parmas.Gender,
+		Synopsis:         "",
+		Avatar:           "./picture/avatar/12334.jpg",
+		Background_image: "./picture/brackground/12334.jpg",
+	}
 }
