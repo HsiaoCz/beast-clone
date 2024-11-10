@@ -5,8 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
+	"github.com/HsiaoCz/beast-clone/gustao/data"
 	"github.com/HsiaoCz/beast-clone/gustao/db"
+	"github.com/HsiaoCz/beast-clone/gustao/handlers"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,7 +35,9 @@ func main() {
 	}
 
 	// connect mongo db
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGOURL")))
 	if err != nil {
 		log.Fatal(err)
@@ -42,13 +49,43 @@ func main() {
 	}()
 
 	var (
-		port   = os.Getenv("PORT")
-		router = http.NewServeMux()
+		port         = os.Getenv("PORT")
+		router       = http.NewServeMux()
+		userData     = data.UserDataInit(db.Get())
+		userHandlers = handlers.UserHandlersInit(userData)
 	)
 
-	logrus.WithFields(logrus.Fields{
-		"listen address": port,
-	}).Info("the http server is running....")
+	{
+		// user handlefunc
+		router.HandleFunc("POST /api/v1/user", handlers.TransferHandlerfunc(userHandlers.HandleCreateUser))
+	}
 
-	http.ListenAndServe(port, router)
+	server := http.Server{
+		Addr:         port,
+		Handler:      router,
+		ReadTimeout:  time.Millisecond * 1500,
+		WriteTimeout: time.Millisecond * 1500,
+	}
+
+	go func() {
+		logrus.WithFields(logrus.Fields{
+			"listen address": port,
+		}).Info("the http server is running....")
+		if err := server.ListenAndServe(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	<-interrupt
+
+	log.Println("shutting down the server....")
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("server gracefully shut down....")
 }

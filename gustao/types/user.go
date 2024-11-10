@@ -1,6 +1,10 @@
 package types
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"os"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -36,8 +40,15 @@ func CreateUserFromParams(parmas CreateUserReq) *User {
 		Birthday:         parmas.Birthday,
 		Age:              parmas.Age,
 		Gender:           parmas.Gender,
+		User_Password:    encryptPassword(parmas.Password),
 		Synopsis:         "",
 		Avatar:           "./picture/avatar/12334.jpg",
 		Background_image: "./picture/brackground/12334.jpg",
 	}
+}
+
+func encryptPassword(oPassword string) string {
+	h := md5.New()
+	h.Write([]byte(os.Getenv("SECRET")))
+	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
