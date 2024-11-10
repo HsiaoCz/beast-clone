@@ -52,3 +52,8 @@ func encryptPassword(oPassword string) string {
 	h.Write([]byte(os.Getenv("SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
+
+type UserLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
