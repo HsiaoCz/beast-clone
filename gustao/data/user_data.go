@@ -9,6 +9,7 @@ import (
 
 type UserDataInter interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
+	UpdateUser(context.Context, *types.User) (*types.User, error)
 }
 
 type UserData struct {
@@ -27,4 +28,8 @@ func (u *UserData) CreateUser(ctx context.Context, user *types.User) (*types.Use
 		return nil, tx.Error
 	}
 	return user, nil
+}
+
+func (u *UserData)UpdateUser(ctx context.Context,user *types.User)(*types.User,error){
+	return nil,nil
 }

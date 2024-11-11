@@ -9,6 +9,8 @@ import (
 
 type PostDataInter interface {
 	CreatePost(context.Context, *types.Posts) (*types.Posts, error)
+	GetPostByID(context.Context, *types.Posts) (*types.Posts, error)
+	GetPostsByUserID(context.Context, string) ([]*types.Posts, error)
 }
 
 type PostData struct {
