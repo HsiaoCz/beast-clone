@@ -9,7 +9,7 @@ import (
 
 type PostDataInter interface {
 	CreatePost(context.Context, *types.Posts) (*types.Posts, error)
-	GetPostByID(context.Context, *types.Posts) (*types.Posts, error)
+	GetPostByID(context.Context, string) (*types.Posts, error)
 	GetPostsByUserID(context.Context, string) ([]*types.Posts, error)
 }
 
@@ -26,5 +26,13 @@ func PostDataInit(client *mongo.Client, coll *mongo.Collection) *PostData {
 }
 
 func (p *PostData) CreatePost(ctx context.Context, posts *types.Posts) (*types.Posts, error) {
+	return nil, nil
+}
+
+func (p *PostData) GetPostByID(ctx context.Context, post_id string) (*types.Posts, error) {
+	return nil, nil
+}
+
+func (p *PostData) GetPostsByUserID(ctx context.Context, user_id string) ([]*types.Posts, error) {
 	return nil, nil
 }

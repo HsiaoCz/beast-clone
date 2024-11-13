@@ -7,7 +7,13 @@ import (
 )
 
 type PostHandlers struct {
-	Post *data.PostData
+	post data.PostDataInter
+}
+
+func PostHandlersInit(post data.PostDataInter) *PostHandlers {
+	return &PostHandlers{
+		post: post,
+	}
 }
 
 func (p *PostHandlers) HandleCreatePost(w http.ResponseWriter, r *http.Request) error {
