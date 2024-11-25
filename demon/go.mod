@@ -1,21 +1,24 @@
 module demon
 
-go 1.21
+go 1.22.0
 
 toolchain go1.22.6
 
 require (
+	github.com/anthdm/superkit v0.0.0-20240701091803-e7f8e0aad3e9
 	github.com/go-kratos/kratos/v2 v2.8.0
 	github.com/google/wire v0.6.0
 	go.uber.org/automaxprocs v1.5.1
-	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.1
+	gorm.io/driver/sqlite v1.5.6
 )
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
 )
 
 require (

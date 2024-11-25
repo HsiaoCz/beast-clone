@@ -12,6 +12,17 @@ service Greeter {
 }
 
 message GetUserRequest{
+   string userID=1;
+}
+message GetUserResponse{
+  string userID =1;
+  string username=2;
+  string email =3;
+  string synopsis=4;
+  string avatar=5;
+  string backgroundImage=6;
+}
+message CreateUserRequest{
   string username=1;
   string password=2;
   string email =3;
@@ -19,9 +30,12 @@ message GetUserRequest{
   string avatar=5;
   string backgroundImage=6;
 }
-message GetUserResponse{
-  
+message CreateUserResponse{
+  string userID =1;
+  string username=2;
+  string email =3;
+  string synopsis=4;
+  string avatar=5;
+  string backgroundImage=6;
 }
-message CreateUserRequest{}
-message CreateUserResponse{}
 
